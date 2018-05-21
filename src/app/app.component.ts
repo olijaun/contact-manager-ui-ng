@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public title = 'asdfasdf';
+  public title = 'Contact Manager';
 
 
   constructor(private http: HttpClient) {

@@ -1,0 +1,8 @@
+<!--<h2>{{ contact.name | uppercase }} Details</h2>--><h2>Contacts</h2>
+<ul class="heroes">
+  <li *ngFor="let contact of contacts">
+    <a routerLink="/detail/{{contact.id}}">
+      <span class="badge">{{contact.id}}</span> {{contact.name}}
+    </a>
+  </li>
+</ul>

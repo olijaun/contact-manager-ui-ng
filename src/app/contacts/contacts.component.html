@@ -1,8 +1,19 @@
 <!--<h2>{{ contact.name | uppercase }} Details</h2>--><h2>Contacts</h2>
-<ul class="heroes">
+<div>
+  <label>Contact name:
+    <input #contactName/>
+  </label>
+  <!-- (click) passes input value to add() and then clears the input -->
+  <button (click)="add(contactName.value); contactName.value=''">
+    add
+  </button>
+
+</div>
+<ul class="contacts">
   <li *ngFor="let contact of contacts">
     <a routerLink="/detail/{{contact.id}}">
       <span class="badge">{{contact.id}}</span> {{contact.name}}
     </a>
+    <button class="delete" title="delete contact" (click)="delete(contact)">x</button>
   </li>
 </ul>

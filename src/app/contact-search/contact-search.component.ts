@@ -1,24 +1,25 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
-import { Observable, Subject } from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 
 import {
   debounceTime, distinctUntilChanged, switchMap
 } from 'rxjs/operators';
 
-import { Contact } from '../contact';
-import { ContactService } from '../contact.service';
+import {Contact} from '../contact';
+import {ContactService} from '../contact.service';
 
 @Component({
   selector: 'app-contact-search',
   templateUrl: './contact-search.component.html',
-  styleUrls: [ './contact-search.component.css' ]
+  styleUrls: ['./contact-search.component.css']
 })
 export class ContactSearchComponent implements OnInit {
   contacts$: Observable<Contact[]>;
   private searchTerms = new Subject<string>();
 
-  constructor(private contactService: ContactService) {}
+  constructor(private contactService: ContactService) {
+  }
 
   // Push a search term into the observable stream.
   search(term: string): void {

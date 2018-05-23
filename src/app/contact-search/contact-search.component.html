@@ -1,10 +1,17 @@
 <div id="search-component">
   <h4>Contact Search</h4>
 
-  <input #searchBox id="search-box" (keyup)="search(searchBox.value)" />
+    <mat-form-field class="example-full-width">
+      <input matInput placeholder="Search string" #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
+    </mat-form-field>
+
+
+  <!--<mat-form-field class="example-full-width">-->
+    <!--<input matInput placeholder="Search string" #searchBox id="search-box" (keyup)="search(searchBox.value)"/>-->
+  <!--</mat-form-field>-->
 
   <ul class="search-result">
-    <li *ngFor="let contact of contacts$ | async" >
+    <li *ngFor="let contact of contacts$ | async">
       <a routerLink="/detail/{{contact.id}}">
         {{contact.name}}
       </a>

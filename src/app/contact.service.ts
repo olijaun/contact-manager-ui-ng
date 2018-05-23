@@ -17,7 +17,7 @@ export class ContactService {
 
   }
 
-  private contactsUrl = 'api/heroes';  // URL to web api
+  private contactsUrl = '/contacts';  // URL to web api
 
   /** POST: add a new hero to the server */
   addContact(contact: Contact): Observable<Contact> {

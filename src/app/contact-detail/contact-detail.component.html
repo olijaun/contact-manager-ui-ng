@@ -1,14 +1,13 @@
-<div *ngIf="contact">
+<div *ngIf="contact" class="container">
 
-  <h2>{{ contact.name | uppercase }} Details</h2>
-  <div><span>id: </span>{{contact.id}}</div>
+  <h2>{{ contact.name.lastNameOrCompanyName | uppercase }}, {{ contact.name.firstName | uppercase }}</h2>
+  <div><span>id: </span>{{contact.contactId}}</div>
   <div>
     <label>name:
-      <input [(ngModel)]="contact.name" placeholder="name"/>
+      <input [(ngModel)]="contact.name.lastNameOrCompanyName" placeholder="name"/>
     </label>
   </div>
 
   <button (click)="goBack()">go back</button>
-
   <button (click)="save()">save</button>
 </div>

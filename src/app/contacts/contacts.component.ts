@@ -23,14 +23,14 @@ export class ContactsComponent implements OnInit {
       .subscribe(contacts => this.contacts = contacts);
   }
 
-  add(name: string): void {
-    name = name.trim();
-    if (!name) { return; }
-    this.contactService.addContact({ name } as Contact)
-      .subscribe(contact => {
-        this.contacts.push(contact);
-      });
-  }
+  // add(name: string): void {
+  //   name = name.trim();
+  //   if (!name) { return; }
+  //   this.contactService.addContact({ name } as Contact)
+  //     .subscribe(contact => {
+  //       this.contacts.push(contact);
+  //     });
+  // }
 
   delete(contact: Contact): void {
     this.contacts = this.contacts.filter(h => h !== contact);

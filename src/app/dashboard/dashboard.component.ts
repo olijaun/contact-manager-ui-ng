@@ -14,11 +14,11 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.getHeroes();
+    this.getContacts();
   }
 
-  getHeroes(): void {
+  getContacts(): void {
     this.contactService.getContacts()
-      .subscribe(heroes => this.contacts = heroes.slice(1, 5));
+      .subscribe(contacts => this.contacts = contacts.slice(1, 5));
   }
 }

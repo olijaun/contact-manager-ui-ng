@@ -6,13 +6,13 @@
   <!--<mat-grid-list cols="2" rowHeight="1:1">-->
 
   <!--<mat-grid-tile>-->
-  <a *ngFor="let contact of contacts" class="col-1-4" routerLink="/detail/{{contact.id}}">
+  <a *ngFor="let contact of contacts" class="col-1-4" routerLink="/detail/{{contact.contactId}}">
 
     <div class="module contact">
       <mat-card class="example-card">
         <mat-card-header>
           <div mat-card-avatar class="example-header-image"></div>
-          <mat-card-title>{{contact.name}}</mat-card-title>
+          <mat-card-title>{{contact.name.lastNameOrCompanyName}}, {{contact.name.firstName}}</mat-card-title>
           <!--<mat-card-subtitle>Person</mat-card-subtitle>-->
         </mat-card-header>
         <!--<img mat-card-image src="https://material.angular.io/assets/img/examples/shiba2.jpg" alt="Photo of a Shiba Inu">-->

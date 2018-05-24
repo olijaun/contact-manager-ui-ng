@@ -18,6 +18,8 @@ export class ContactSearchComponent implements OnInit {
   contacts$: Observable<Contact[]>;
   private searchTerms = new Subject<string>();
 
+  displayedColumns = ['contactId', 'firstName', 'lastNameOrCompanyName'];
+
   constructor(private contactService: ContactService) {
   }
 

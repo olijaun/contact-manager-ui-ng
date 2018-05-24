@@ -11,8 +11,8 @@
 </div>
 <ul class="contacts">
   <li *ngFor="let contact of contacts">
-    <a routerLink="/detail/{{contact.id}}">
-      <span class="badge">{{contact.id}}</span> {{contact.name}}
+    <a routerLink="/detail/{{contact.contactId}}">
+      <span class="badge">{{contact.contactId}}</span> {{contact.name.lastNameOrCompanyName}}, {{contact.name.firstName}}
     </a>
     <button class="delete" title="delete contact" (click)="delete(contact)">x</button>
   </li>

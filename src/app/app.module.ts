@@ -8,25 +8,28 @@ import {ContactDetailComponent} from './contact-detail/contact-detail.component'
 import {MessagesComponent} from './messages/messages.component';
 import {AppRoutingModule} from './app-routing.module';
 import {DashboardComponent} from './dashboard/dashboard.component';
-import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
-import {InMemoryDataService} from './in-memory-data.service';
+// import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
+// import {InMemoryDataService} from './in-memory-data.service';
 import {ContactSearchComponent} from './contact-search/contact-search.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MyNavComponent} from './my-nav/my-nav.component';
 import {LayoutModule} from '@angular/cdk/layout';
 import {
-  MatToolbarModule,
   MatButtonModule,
-  MatSidenavModule,
-  MatIconModule,
-  MatListModule,
-  MatGridListModule,
   MatCardModule,
+  MatFormFieldModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
   MatMenuModule,
-  MatTableModule,
+  MatOptionModule,
   MatPaginatorModule,
+  MatSelectModule,
+  MatSidenavModule,
   MatSortModule,
-  MatFormFieldModule, MatInputModule
+  MatTableModule,
+  MatToolbarModule
 } from '@angular/material';
 import {MyDashboardComponent} from './my-dashboard/my-dashboard.component';
 import {MyTableComponent} from './my-table/my-table.component';
@@ -53,9 +56,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests
     // and returns simulated server responses.
     // Remove it when a real server is ready to receive requests.
-    HttpClientInMemoryWebApiModule.forRoot(
-      InMemoryDataService, {dataEncapsulation: false}
-    ),
+    // HttpClientInMemoryWebApiModule.forRoot(
+    //   InMemoryDataService, {dataEncapsulation: false}
+    // ),
     BrowserAnimationsModule,
     LayoutModule,
     MatToolbarModule,
@@ -71,7 +74,9 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatSortModule,
     MatFormFieldModule,
     MatInputModule, // TODO: how do I now I have to import that?
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatOptionModule,
+    MatSelectModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,4 +1,3 @@
-<div>
 <mat-sidenav-container class="sidenav-container">
   <mat-sidenav
     #drawer
@@ -9,9 +8,10 @@
     [opened]="!(isHandset$ | async)">
     <mat-toolbar color="primary">Menu</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item routerLink="/dashboard">Dashboard</a>
-      <a mat-list-item routerLink="/contacts">Contacts</a>
-      <a mat-list-item routerLink="/mydashboard">My Dashboard</a>
+      <!--<a mat-list-item routerLink="/dashboard">Dashboard</a>-->
+      <a mat-list-item routerLink="/search">Search</a>
+      <a mat-list-item routerLink="/detail/new">Add new Contact</a>
+      <!--<a mat-list-item routerLink="/mydashboard">My Dashboard</a>-->
     </mat-nav-list>
   </mat-sidenav>
   <mat-sidenav-content>
@@ -29,4 +29,3 @@
     <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
-</div>

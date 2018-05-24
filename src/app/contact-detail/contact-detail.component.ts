@@ -1,8 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { Contact } from '../contact';
-import { ActivatedRoute } from '@angular/router';
-import { Location } from '@angular/common';
-import { ContactService }  from '../contact.service';
+import {Component, Input, OnInit} from '@angular/core';
+import {Contact, Name} from '../contact';
+import {ActivatedRoute} from '@angular/router';
+import {Location} from '@angular/common';
+import {ContactService} from '../contact.service';
 
 @Component({
   selector: 'app-contact-detail',
@@ -17,10 +17,19 @@ export class ContactDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private contactService: ContactService,
     private location: Location
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
-    this.getContact();
+
+    const id = this.route.snapshot.paramMap.get('id');
+
+    if (id === 'new') {
+      this.contact = new Contact();
+      this.contact.name = new Name();
+    } else {
+      this.getContact();
+    }
   }
 
   getContact(): void {

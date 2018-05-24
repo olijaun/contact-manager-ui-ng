@@ -17,12 +17,12 @@ export class ContactService {
 
   }
 
-  private contactsUrl = '/contacts';  // URL to web api
+  private contactsUrl = '/api/contacts';  // URL to web api
 
   /** POST: add a new hero to the server */
   addContact(contact: Contact): Observable<Contact> {
     return this.http.post<Contact>(this.contactsUrl, contact, httpOptions).pipe(
-      tap((c: Contact) => this.log(`added contact w/ id=${c.id}`)),
+      tap((c: Contact) => this.log(`added contact w/ id=${c.contactId}`)),
       catchError(this.handleError<Contact>('contact'))
     );
   }
@@ -48,14 +48,14 @@ export class ContactService {
   updateContact(contact: Contact): Observable<any> {
 
     return this.http.put(this.contactsUrl, contact, httpOptions).pipe(
-      tap(_ => this.log(`updated contact id=${contact.id}`)),
+      tap(_ => this.log(`updated contact id=${contact.contactId}`)),
       catchError(this.handleError<any>('updateContact'))
     );
   }
 
   /** DELETE: delete the hero from the server */
   deleteContact (contact: Contact | number): Observable<Contact> {
-    const id = typeof contact === 'number' ? contact : contact.id;
+    const id = typeof contact === 'number' ? contact : contact.contactId;
     const url = `${this.contactsUrl}/${id}`;
 
     return this.http.delete<Contact>(url, httpOptions).pipe(
@@ -70,7 +70,7 @@ export class ContactService {
       // if not search term, return empty hero array.
       return of([]);
     }
-    return this.http.get<Contact[]>(`${this.contactsUrl}/?name=${term}`).pipe(
+    return this.http.get<Contact[]>(`${this.contactsUrl}/?nameLine=${term}`).pipe(
       tap(_ => this.log(`found contracts matching "${term}"`)),
       catchError(this.handleError<Contact[]>('searchContract', []))
     );

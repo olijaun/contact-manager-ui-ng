@@ -34,6 +34,7 @@ import {
 import {MyDashboardComponent} from './my-dashboard/my-dashboard.component';
 import {MyTableComponent} from './my-table/my-table.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
+import {RouterModule} from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
     MatInputModule, // TODO: how do I now I have to import that?
     FlexLayoutModule,
     MatOptionModule,
-    MatSelectModule
+    MatSelectModule,
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]

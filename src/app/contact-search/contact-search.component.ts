@@ -8,6 +8,8 @@ import {
 
 import {Contact} from '../contact';
 import {ContactService} from '../contact.service';
+import {Location} from '@angular/common';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-contact-search',
@@ -20,7 +22,7 @@ export class ContactSearchComponent implements OnInit {
 
   displayedColumns = ['contactId', 'firstName', 'lastNameOrCompanyName'];
 
-  constructor(private contactService: ContactService) {
+  constructor(private contactService: ContactService, private location: Location, private router: Router) {
   }
 
   // Push a search term into the observable stream.
@@ -39,5 +41,11 @@ export class ContactSearchComponent implements OnInit {
       // switch to new search observable each time the term changes
       switchMap((term: string) => this.contactService.searchContacts(term)),
     );
+  }
+
+  rowClicked(clickedContact: Contact): void {
+    console.log(clickedContact.contactId);
+    this.router.navigateByUrl('/detail/1'); // TODO: why does location.go not work?
+    // this.location.go('/detail/' + clickedContact.contactId);
   }
 }

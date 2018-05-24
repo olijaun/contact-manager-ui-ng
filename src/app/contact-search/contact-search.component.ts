@@ -45,7 +45,7 @@ export class ContactSearchComponent implements OnInit {
 
   rowClicked(clickedContact: Contact): void {
     console.log(clickedContact.contactId);
-    this.router.navigateByUrl('/detail/1'); // TODO: why does location.go not work?
+    this.router.navigateByUrl('/detail/' + clickedContact.contactId); // TODO: why does location.go not work?
     // this.location.go('/detail/' + clickedContact.contactId);
   }
 }

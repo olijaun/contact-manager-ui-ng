@@ -17,12 +17,13 @@ import {LayoutModule} from '@angular/cdk/layout';
 import {
   MatButtonModule,
   MatCardModule,
+  MatDatepickerModule,
   MatFormFieldModule,
   MatGridListModule,
   MatIconModule,
   MatInputModule,
   MatListModule,
-  MatMenuModule,
+  MatMenuModule, MatNativeDateModule,
   MatOptionModule,
   MatPaginatorModule,
   MatSelectModule,
@@ -78,7 +79,9 @@ import {RouterModule} from '@angular/router';
     FlexLayoutModule,
     MatOptionModule,
     MatSelectModule,
-    RouterModule
+    RouterModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [],
   bootstrap: [AppComponent]

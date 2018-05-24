@@ -36,7 +36,7 @@ export class ContactService {
     );
   }
 
-  getContact(id: number): Observable<Contact> {
+  getContact(id: string): Observable<Contact> {
     const url = `${this.contactsUrl}/${id}`;
     return this.http.get<Contact>(url).pipe(
       tap(_ => this.log(`fetched contact id=${id}`)),
@@ -47,7 +47,7 @@ export class ContactService {
   /** PUT: update the hero on the server */
   updateContact(contact: Contact): Observable<any> {
 
-    return this.http.put(this.contactsUrl, contact, httpOptions).pipe(
+    return this.http.put(this.contactsUrl + '/' + contact.contactId, contact, httpOptions).pipe(
       tap(_ => this.log(`updated contact id=${contact.contactId}`)),
       catchError(this.handleError<any>('updateContact'))
     );

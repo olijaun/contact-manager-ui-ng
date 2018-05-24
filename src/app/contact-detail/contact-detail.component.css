@@ -9,3 +9,16 @@
   /*padding-right: $content-padding-side-xs;*/
   /*}*/
 }
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-container > * {
+  width: 100%;
+}
+
+.example-container > mat-card > mat-card-content {
+  width: 100%;
+}

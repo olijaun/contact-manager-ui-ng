@@ -12,7 +12,8 @@ const routes: Routes = [
   {path: 'dashboard', component: DashboardComponent},
   {path: 'contacts', component: ContactsComponent},
   {path: 'search', component: ContactSearchComponent},
-  {path: 'detail/:id', component: ContactDetailComponent}
+  {path: 'detail/:id', component: ContactDetailComponent},
+  {path: 'new', component: ContactDetailComponent}
 ];
 
 @NgModule({

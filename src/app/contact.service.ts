@@ -17,9 +17,8 @@ export class ContactService {
 
   }
 
-  private contactsUrl = '/api/contacts';  // URL to web api
+  private contactsUrl = '/api/contacts';
 
-  /** POST: add a new hero to the server */
   addContact(contact: Contact): Observable<Contact> {
     return this.http.post<Contact>(this.contactsUrl, contact, httpOptions).pipe(
       tap((c: Contact) => this.log(`added contact w/ id=${c.contactId}`)),
@@ -44,7 +43,6 @@ export class ContactService {
     );
   }
 
-  /** PUT: update the hero on the server */
   updateContact(contact: Contact): Observable<any> {
 
     return this.http.put(this.contactsUrl + '/' + contact.contactId, contact, httpOptions).pipe(
@@ -53,7 +51,6 @@ export class ContactService {
     );
   }
 
-  /** DELETE: delete the hero from the server */
   deleteContact (contact: Contact | number): Observable<Contact> {
     const id = typeof contact === 'number' ? contact : contact.contactId;
     const url = `${this.contactsUrl}/${id}`;
@@ -64,7 +61,6 @@ export class ContactService {
     );
   }
 
-  /* GET contacts whose name contains search term */
   searchContacts(term: string): Observable<Contact[]> {
     if (!term.trim()) {
       // if not search term, return empty hero array.

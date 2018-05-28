@@ -121,7 +121,7 @@ export class ContactDetailComponent implements OnInit {
       }
 
       if (!isEqual(this.originalContact.name, contractToBeSaved.name)) {
-        console.log('updateName' + JSON.stringify(this.originalContact.name) + ', after: ' + JSON.stringify((contractToBeSaved.name);
+        console.log('updateName' + JSON.stringify(this.originalContact.name) + ', after: ' + JSON.stringify((contractToBeSaved.name)));
       }
     }
   }

@@ -116,7 +116,7 @@ export class ContactDetailComponent implements OnInit {
       console.log('contractToBeSaved: ' + contractToBeSaved.streetAddress);
 
       if (!isEqual(this.originalContact.streetAddress, contractToBeSaved.streetAddress)) {
-        // updateAddress: this.contactService.updateContact(contractToBeSaved).subscribe();
+        //this.contactService.updateContact(contractToBeSaved).subscribe(() => {}, e => this.bla(e));
         console.log('updateAddress');
       }
 
@@ -124,5 +124,9 @@ export class ContactDetailComponent implements OnInit {
         console.log('updateName' + JSON.stringify(this.originalContact.name) + ', after: ' + JSON.stringify((contractToBeSaved.name)));
       }
     }
+  }
+
+  bla(error: any): void {
+
   }
 }

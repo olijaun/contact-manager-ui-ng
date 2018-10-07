@@ -8,7 +8,7 @@ import {ContactSearchComponent} from './contact-search/contact-search.component'
 
 const routes: Routes = [
   {path: '', redirectTo: '/search', pathMatch: 'full'},
-  {path: 'mydashboard', component: MyDashboardComponent},
+  {path: 'login', component: MyDashboardComponent},
   {path: 'dashboard', component: DashboardComponent},
   {path: 'contacts', component: ContactsComponent},
   {path: 'search', component: ContactSearchComponent},

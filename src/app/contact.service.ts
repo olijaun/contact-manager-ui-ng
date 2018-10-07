@@ -4,6 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, tap} from 'rxjs/operators';
 import {Contact} from './contact';
 import {MessageService} from './message.service';
+import {OAuthService} from "angular-oauth2-oidc";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -12,7 +13,7 @@ const httpOptions = {
 @Injectable({providedIn: 'root'})
 export class ContactService {
 
-  constructor(private http: HttpClient,
+  constructor(private http: HttpClient, private oauthService: OAuthService,
               private messageService: MessageService) {
 
   }
@@ -66,7 +67,19 @@ export class ContactService {
       // if not search term, return empty hero array.
       return of([]);
     }
-    return this.http.get<Contact[]>(`${this.contactsUrl}/?nameLine=${term}`).pipe(
+
+    var headers = new HttpHeaders({
+      "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    });
+    // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
+    console.log('hello: ' + this.oauthService.getIdToken());
+
+    // return this.http.get<Contact[]>(`/api/secure`, {headers: headers}).pipe(
+    //   tap(_ => this.log(`found contracts matching "${term}"`)),
+    //   catchError(this.handleError<Contact[]>('searchContract', []))
+    // );
+
+    return this.http.get<Contact[]>(`${this.contactsUrl}/?nameLine=${term}`, {headers: headers}).pipe(
       tap(_ => this.log(`found contracts matching "${term}"`)),
       catchError(this.handleError<Contact[]>('searchContract', []))
     );

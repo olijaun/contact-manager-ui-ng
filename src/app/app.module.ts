@@ -36,6 +36,7 @@ import {MyDashboardComponent} from './my-dashboard/my-dashboard.component';
 import {MyTableComponent} from './my-table/my-table.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {RouterModule} from '@angular/router';
+import { OAuthModule } from 'angular-oauth2-oidc';
 
 @NgModule({
   declarations: [
@@ -81,7 +82,13 @@ import {RouterModule} from '@angular/router';
     MatSelectModule,
     RouterModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    OAuthModule.forRoot({
+      resourceServer: {
+        allowedUrls: ['https://localhost'],
+        sendAccessToken: true
+      }
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

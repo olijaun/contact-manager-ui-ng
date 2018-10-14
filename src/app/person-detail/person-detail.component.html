@@ -1,9 +1,11 @@
-<div *ngIf="contact" class="container">
+<div *ngIf="person" class="container">
 
-  <h2 *ngIf="this.isNew()">New Contact</h2>
-  <h2 *ngIf="!this.isNew()">{{ contact.name.lastNameOrCompanyName | uppercase }}, {{ contact.name.firstName | uppercase }}</h2>
+  <h2 *ngIf="this.isNew()">New Person</h2>
+  <h2 *ngIf="!this.isNew()">{{ person.basicData.name.lastNameOrCompanyName | uppercase }}, {{ person.basicData.name.firstName |
+    uppercase
+    }}</h2>
   <p>
-    <mat-label>Id: {{contact.contactId}}</mat-label>
+    <mat-label>Id: {{person.id}}</mat-label>
   </p>
   <form (ngSubmit)="onSubmit()" #basicForm="ngForm">
     <mat-card class="example-container">
@@ -14,7 +16,7 @@
 
         <mat-form-field appearance="standard">
           <mat-label>Type</mat-label>
-          <mat-select name="contactType"  [(ngModel)]="contact.contactType" [disabled]="!this.isNew()">
+          <mat-select name="contactType" [(ngModel)]="person.type" [disabled]="!this.isNew()">
             <mat-option *ngFor="let contactType of types" [value]="contactType.value">
               {{ contactType.viewValue }}
             </mat-option>
@@ -22,17 +24,18 @@
         </mat-form-field>
 
         <mat-form-field appearance="standard" *ngIf="isPerson()">
-          <mat-label>Firstname</mat-label>
-          <input name="firstName" [(ngModel)]="contact.name.firstName" matInput placeholder="">
+          <mat-label>First name</mat-label>
+          <input name="firstName" [(ngModel)]="person.basicData.name.firstName" matInput placeholder="">
         </mat-form-field>
 
         <mat-form-field appearance="standard">
-          <mat-label>Lastname</mat-label>
-          <input name="lastName" [(ngModel)]="contact.name.lastNameOrCompanyName" matInput placeholder="" required>
+          <mat-label>Last name</mat-label>
+          <input name="lastName" [(ngModel)]="person.basicData.name.lastNameOrCompanyName" matInput placeholder="" required>
         </mat-form-field>
 
         <mat-form-field *ngIf="isPerson()">
-          <input name="birthDate" matInput [matDatepicker]="picker" placeholder="Choose a date" [(ngModel)]="contact.birthDate"
+          <input name="birthDate" matInput [matDatepicker]="picker" placeholder="Choose a date"
+                 [(ngModel)]="person.basicData.birthDate"
                  disabled>
           <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
           <mat-datepicker #picker disabled="false"></mat-datepicker>
@@ -40,7 +43,7 @@
 
         <mat-form-field *ngIf="isPerson()">
           <mat-label>Sex</mat-label>
-          <mat-select name="sex" placeholder="Male or Female" [(ngModel)]="contact.sex" >
+          <mat-select name="sex" placeholder="Male or Female" [(ngModel)]="person.basicData.sex" >
             <mat-option *ngFor="let sex of sexes" [value]="sex.value">
               {{ sex.viewValue }}
             </mat-option>
@@ -50,22 +53,22 @@
 
       </mat-card-content>
     </mat-card>
-    <button type="submit" mat-raised-button [disabled]="!basicForm.form.valid">Submit</button>
+    <!--<button type="submit" mat-raised-button [disabled]="!basicForm.form.valid">Submit</button>-->
   </form>
 
   <p></p>
 
   <mat-card class="example-container">
-    <mat-card-title>Communication</mat-card-title>
+    <mat-card-title>Contact Info</mat-card-title>
 
     <mat-card-content class="example-container">
       <mat-form-field appearance="standard">
         <mat-label>E-Mail Address</mat-label>
-        <input [(ngModel)]="contact.emailAddress" matInput placeholder="" required>
+        <input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" required>
       </mat-form-field>
       <mat-form-field appearance="standard">
         <mat-label>Phone Number</mat-label>
-        <input [(ngModel)]="contact.phoneNumber" matInput placeholder="" required>
+        <input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" required>
       </mat-form-field>
     </mat-card-content>
   </mat-card>
@@ -79,25 +82,25 @@
       <div>
         <mat-form-field appearance="standard">
           <mat-label>Street</mat-label>
-          <input [(ngModel)]="streetAddress.street" matInput placeholder="" required>
+          <input [(ngModel)]="person.streetAddress.street" matInput placeholder="" required>
         </mat-form-field>
         <mat-form-field appearance="standard">
           <mat-label>Number</mat-label>
-          <input [(ngModel)]="streetAddress.streetNumber" matInput placeholder="">
+          <input [(ngModel)]="person.streetAddress.streetNumber" matInput placeholder="">
         </mat-form-field>
       </div>
       <div>
         <mat-form-field appearance="standard">
           <mat-label>Zip</mat-label>
-          <input [(ngModel)]="streetAddress.zip" matInput placeholder="" required>
+          <input [(ngModel)]="person.streetAddress.zip" matInput placeholder="" required>
         </mat-form-field>
         <mat-form-field appearance="standard">
           <mat-label>City</mat-label>
-          <input [(ngModel)]="streetAddress.city" matInput placeholder="" required>
+          <input [(ngModel)]="person.streetAddress.city" matInput placeholder="" required>
         </mat-form-field>
         <mat-form-field appearance="standard">
           <mat-label>Country</mat-label>
-          <input [(ngModel)]="streetAddress.isoCountryCode" matInput placeholder="" required>
+          <input [(ngModel)]="person.streetAddress.isoCountryCode" matInput placeholder="" required>
         </mat-form-field>
       </div>
     </mat-card-content>

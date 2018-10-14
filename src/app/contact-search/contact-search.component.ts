@@ -6,8 +6,8 @@ import {
   debounceTime, distinctUntilChanged, switchMap
 } from 'rxjs/operators';
 
-import {Contact} from '../contact';
-import {ContactService} from '../contact.service';
+import {Person} from '../person';
+import {PersonService} from '../person.service';
 import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 
@@ -17,12 +17,12 @@ import {Router} from '@angular/router';
   styleUrls: ['./contact-search.component.css']
 })
 export class ContactSearchComponent implements OnInit {
-  contacts$: Observable<Contact[]>;
+  contacts$: Observable<Person[]>;
   private searchTerms = new Subject<string>();
 
   displayedColumns = ['contactId', 'firstName', 'lastNameOrCompanyName'];
 
-  constructor(private contactService: ContactService, private location: Location, private router: Router) {
+  constructor(private contactService: PersonService, private location: Location, private router: Router) {
   }
 
   // Push a search term into the observable stream.
@@ -39,13 +39,13 @@ export class ContactSearchComponent implements OnInit {
       distinctUntilChanged(),
 
       // switch to new search observable each time the term changes
-      switchMap((term: string) => this.contactService.searchContacts(term)),
+      switchMap((term: string) => this.contactService.searchPersons(term)),
     );
   }
 
-  rowClicked(clickedContact: Contact): void {
-    console.log(clickedContact.contactId);
-    this.router.navigateByUrl('/detail/' + clickedContact.contactId); // TODO: why does location.go not work?
+  rowClicked(clickedContact: Person): void {
+    console.log(clickedContact.id);
+    this.router.navigateByUrl('/detail/' + clickedContact.id); // TODO: why does location.go not work?
     // this.location.go('/detail/' + clickedContact.contactId);
   }
 }

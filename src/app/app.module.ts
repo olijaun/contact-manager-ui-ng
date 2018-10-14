@@ -4,7 +4,7 @@ import {FormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import {ContactsComponent} from './contacts/contacts.component';
-import {ContactDetailComponent} from './contact-detail/contact-detail.component';
+import {PersonDetailComponent} from './person-detail/person-detail.component';
 import {MessagesComponent} from './messages/messages.component';
 import {AppRoutingModule} from './app-routing.module';
 import {DashboardComponent} from './dashboard/dashboard.component';
@@ -36,13 +36,14 @@ import {MyDashboardComponent} from './my-dashboard/my-dashboard.component';
 import {MyTableComponent} from './my-table/my-table.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {RouterModule} from '@angular/router';
-import { OAuthModule } from 'angular-oauth2-oidc';
+import { BASE_URL } from './app.tokens';
+import {OAuthModule, OAuthStorage} from 'angular-oauth2-oidc';
 
 @NgModule({
   declarations: [
     AppComponent,
     ContactsComponent,
-    ContactDetailComponent,
+    PersonDetailComponent,
     MessagesComponent,
     DashboardComponent,
     ContactSearchComponent,
@@ -85,13 +86,34 @@ import { OAuthModule } from 'angular-oauth2-oidc';
     MatNativeDateModule,
     OAuthModule.forRoot({
       resourceServer: {
-        allowedUrls: ['https://localhost'],
+        allowedUrls: ['https://localhost:8443/api'],
         sendAccessToken: true
       }
     })
   ],
-  providers: [],
+  providers: [
+    // {provide: AuthConfig, useValue: authConfig },
+    { provide: OAuthStorage, useValue: localStorage },
+    // { provide: ValidationHandler, useClass: JwksValidationHandler },
+    { provide: BASE_URL, useValue: 'https://localhost:8443' }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {
 }
+
+// const myStore: OAuthStorage = {
+//   getItem(key) {
+//     const data = localStorage.getItem(key);
+//     console.warn('get', key, data.substring(0, 25));
+//     return data;
+//   },
+//   setItem(key, data) {
+//     console.warn('set', key, data.substring(0, 25));
+//     return localStorage.setItem(key,data);
+//   },
+//   removeItem(key) {
+//     console.warn('remove', key);
+//     return localStorage.removeItem(key);
+//   },
+// };

@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, map, tap} from 'rxjs/operators';
-import {Contact} from './contact';
+import {catchError, tap} from 'rxjs/operators';
+import {Person} from './person';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
 
@@ -11,66 +11,64 @@ const httpOptions = {
 };
 
 @Injectable({providedIn: 'root'})
-export class ContactService {
+export class PersonService {
 
   constructor(private http: HttpClient, private oauthService: OAuthService,
               private messageService: MessageService) {
 
   }
 
-  private contactsUrl = '/api/contacts';
+  private personsUrl = '/api/persons';
 
-  addContact(contact: Contact): Observable<Contact> {
-    return this.http.post<Contact>(this.contactsUrl, contact, httpOptions).pipe(
-      tap((c: Contact) => this.log(`added contact w/ id=${c.contactId}`)),
-      catchError(this.handleError<Contact>('contact'))
+  addPerson(contact: Person): Observable<Person> {
+    return this.http.post<Person>(this.personsUrl, contact, httpOptions).pipe(
+      tap((c: Person) => this.log(`added perso w/ id=${c.id}`)),
+      catchError(this.handleError<Person>('person'))
     );
   }
 
-  getContacts(): Observable<Contact[]> {
+  getPersons(): Observable<Person[]> {
     // TODO: send the message _after_ fetching the heroes
     this.messageService.add('HeroService: fetched heroes');
-    return this.http.get<Contact[]>(this.contactsUrl).pipe(
+    return this.http.get<Person[]>(this.personsUrl).pipe(
       tap(heroes => this.log(`fetched heroes`)),
       catchError(this.handleError('getHeroes', []))
     );
   }
 
-  getContact(id: string): Observable<Contact> {
-    const url = `${this.contactsUrl}/${id}`;
-    return this.http.get<Contact>(url).pipe(
+  getPerson(id: string): Observable<Person> {
+    const url = `${this.personsUrl}/${id}`;
+    return this.http.get<Person>(url).pipe(
       tap(_ => this.log(`fetched contact id=${id}`)),
-      catchError(this.handleError<Contact>(`getContact id=${id}`))
+      catchError(this.handleError<Person>(`getContact id=${id}`))
     );
   }
 
-  updateContact(contact: Contact): Observable<any> {
-
-    return this.http.put(this.contactsUrl + '/' + contact.contactId, contact, httpOptions).pipe(
-      tap(_ => this.log(`updated contact id=${contact.contactId}`)),
-      catchError(this.handleError<any>('updateContact'))
+  updatePerson(person: Person): Observable<any> {
+    console.log(this.personsUrl + '/' + person.id);
+    console.log(JSON.stringify(this.personsUrl));
+    return this.http.put(this.personsUrl + '/' + person.id, person, this.getOptions()).pipe(
+      tap(_ => this.log(`updated contact id=${person.id}`)),
+      catchError(this.handleError<any>('updatePerson'))
     );
   }
 
-  deleteContact (contact: Contact | number): Observable<Contact> {
-    const id = typeof contact === 'number' ? contact : contact.contactId;
-    const url = `${this.contactsUrl}/${id}`;
+  deletePerson(person: Person | number): Observable<Person> {
+    const id = typeof person === 'number' ? person : person.id;
+    const url = `${this.personsUrl}/${id}`;
 
-    return this.http.delete<Contact>(url, httpOptions).pipe(
+    return this.http.delete<Person>(url, httpOptions).pipe(
       tap(_ => this.log(`deleted contact id=${id}`)),
-      catchError(this.handleError<Contact>('deleteContact'))
+      catchError(this.handleError<Person>('deletePerson'))
     );
   }
 
-  searchContacts(term: string): Observable<Contact[]> {
+  searchPersons(term: string): Observable<Person[]> {
     if (!term.trim()) {
       // if not search term, return empty hero array.
       return of([]);
     }
 
-    var headers = new HttpHeaders({
-      "Authorization": "Bearer " + this.oauthService.getAccessToken()
-    });
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
     console.log('hello: ' + this.oauthService.getIdToken());
 
@@ -79,10 +77,22 @@ export class ContactService {
     //   catchError(this.handleError<Contact[]>('searchContract', []))
     // );
 
-    return this.http.get<Contact[]>(`${this.contactsUrl}/?nameLine=${term}`, {headers: headers}).pipe(
-      tap(_ => this.log(`found contracts matching "${term}"`)),
-      catchError(this.handleError<Contact[]>('searchContract', []))
+    return this.http.get<Person[]>(`${this.personsUrl}/?nameLine=${term}`, this.getOptions()).pipe(
+      tap(_ => this.log(`found persons matching "${term}"`)),
+      catchError(this.handleError<Person[]>('searchContract', []))
     );
+  }
+
+  getOptions() {
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer " + this.oauthService.getAccessToken()
+      })
+    };
+    // return new HttpHeaders({
+    //   "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    // });
   }
 
   /**

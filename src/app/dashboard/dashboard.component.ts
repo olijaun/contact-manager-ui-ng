@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Contact} from '../contact';
-import {ContactService} from '../contact.service';
+import {Person} from '../person';
+import {PersonService} from '../person.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,9 +8,9 @@ import {ContactService} from '../contact.service';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  contacts: Contact[] = [];
+  contacts: Person[] = [];
 
-  constructor(private contactService: ContactService) {
+  constructor(private contactService: PersonService) {
   }
 
   ngOnInit() {
@@ -18,7 +18,7 @@ export class DashboardComponent implements OnInit {
   }
 
   getContacts(): void {
-    this.contactService.getContacts()
+    this.contactService.getPersons()
       .subscribe(contacts => this.contacts = contacts.slice(1, 5));
   }
 }

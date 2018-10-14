@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {Contact} from '../contact';
-import {ContactService} from '../contact.service';
+import {Person} from '../person';
+import {PersonService} from '../person.service';
 
 @Component({
   selector: 'app-contacts',
@@ -9,9 +9,9 @@ import {ContactService} from '../contact.service';
 })
 export class ContactsComponent implements OnInit {
 
-  contacts: Contact[];
+  contacts: Person[];
 
-  constructor(private contactService: ContactService) {
+  constructor(private contactService: PersonService) {
   }
 
   ngOnInit() {
@@ -19,21 +19,21 @@ export class ContactsComponent implements OnInit {
   }
 
   getContacts(): void {
-    this.contactService.getContacts()
+    this.contactService.getPersons()
       .subscribe(contacts => this.contacts = contacts);
   }
 
   // add(name: string): void {
   //   name = name.trim();
   //   if (!name) { return; }
-  //   this.contactService.addContact({ name } as Contact)
-  //     .subscribe(contact => {
-  //       this.contacts.push(contact);
+  //   this.contactService.addPerson({ name } as Contact)
+  //     .subscribe(person => {
+  //       this.contacts.push(person);
   //     });
   // }
 
-  delete(contact: Contact): void {
+  delete(contact: Person): void {
     this.contacts = this.contacts.filter(h => h !== contact);
-    this.contactService.deleteContact(contact).subscribe();
+    this.contactService.deletePerson(contact).subscribe();
   }
 }

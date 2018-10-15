@@ -38,6 +38,8 @@ import {FlexLayoutModule} from '@angular/flex-layout';
 import {RouterModule} from '@angular/router';
 import { BASE_URL } from './app.tokens';
 import {OAuthModule, OAuthStorage} from 'angular-oauth2-oidc';
+import { MemberSearchComponent } from './member-search/member-search.component';
+import { MemberDetailComponent } from './member-detail/member-detail.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import {OAuthModule, OAuthStorage} from 'angular-oauth2-oidc';
     ContactSearchComponent,
     MyNavComponent,
     MyDashboardComponent,
-    MyTableComponent
+    MyTableComponent,
+    MemberSearchComponent,
+    MemberDetailComponent
   ],
   imports: [
     BrowserModule,

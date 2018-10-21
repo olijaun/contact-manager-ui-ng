@@ -1,9 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {Observable, Subject} from "rxjs/index";
+import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
 import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
 import {Location} from "@angular/common";
-import {Person} from "../person";
 import {Member} from "../member";
 import {MemberService} from "../member.service";
 
@@ -40,9 +39,9 @@ export class MemberSearchComponent implements OnInit {
     );
   }
 
-  rowClicked(clickedContact: Person): void {
-    console.log(clickedContact.id);
-    this.router.navigateByUrl('/member-detail/' + clickedContact.id); // TODO: why does location.go not work?
+  rowClicked(clickedMember: Member): void {
+    console.log(clickedMember.id);
+    this.router.navigateByUrl('/member-detail/' + clickedMember.id); // TODO: why does location.go not work?
     // this.location.go('/detail/' + clickedContact.contactId);
   }
 }

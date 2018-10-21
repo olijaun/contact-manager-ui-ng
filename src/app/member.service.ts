@@ -38,7 +38,7 @@ export class MemberService {
 
   getMember(id: string): Observable<Member> {
     const url = `${this.memberUrl}/${id}`;
-    return this.http.get<Member>(url).pipe(
+    return this.http.get<Member>(url, this.getOptions()).pipe(
       tap(_ => this.log(`fetched member id=${id}`)),
       catchError(this.handleError<Member>(`getMember id=${id}`))
     );
@@ -72,14 +72,9 @@ export class MemberService {
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
     console.log('hello: ' + this.oauthService.getIdToken());
 
-    // return this.http.get<Contact[]>(`/api/secure`, {headers: headers}).pipe(
-    //   tap(_ => this.log(`found contracts matching "${term}"`)),
-    //   catchError(this.handleError<Contact[]>('searchContract', []))
-    // );
-
-    return this.http.get<Member[]>(`${this.memberUrl}/?nameLine=${term}`, this.getOptions()).pipe(
-      tap(_ => this.log(`found persons matching "${term}"`)),
-      catchError(this.handleError<Member[]>('searchContract', []))
+    return this.http.get<Member[]>(`${this.memberUrl}/?searchString=${term}`, this.getOptions()).pipe(
+      tap(_ => this.log(`found members matching "${term}"`)),
+      catchError(this.handleError<Member[]>('searchMembers', []))
     );
   }
 

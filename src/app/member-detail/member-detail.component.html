@@ -6,7 +6,7 @@
   <p>
     <mat-label>Id: {{member.id}}</mat-label>
   </p>
-  <form (ngSubmit)="onSubmit()" #basicForm="ngForm">
+  <form> <!-- (ngSubmit)="onSubmit()" #basicForm="ngForm"-->
     <mat-card class="example-container">
 
       <mat-card-title>Person data</mat-card-title>
@@ -31,19 +31,24 @@
 
       <mat-card-content class="example-container">
 
-        <!--<mat-form-field appearance="standard">-->
-          <!--<mat-label>Type</mat-label>-->
-          <!--<mat-select name="contactType" [(ngModel)]="person.type" [disabled]="!this.isNew()">-->
-            <!--<mat-option *ngFor="let contactType of types" [value]="contactType.value">-->
-              <!--{{ contactType.viewValue }}-->
-            <!--</mat-option>-->
-          <!--</mat-select>-->
-        <!--</mat-form-field>-->
-
         <mat-form-field appearance="standard">
-          <mat-label>Last name</mat-label>
-          <input name="lastName" [(ngModel)]="member.lastNameOrCompanyName" matInput placeholder="" required>
+          <mat-label>Subscription Type</mat-label>
+          <mat-select name="subscriptionType" [(ngModel)]="newSubscription.subscriptionTypeId">
+            <mat-option *ngFor="let subscriptionType of subscriptionTypes" [value]="subscriptionType.value">
+              {{ subscriptionType.viewValue }}
+            </mat-option>
+          </mat-select>
         </mat-form-field>
+        <mat-form-field appearance="standard">
+          <mat-label>Subscription Period</mat-label>
+          <mat-select name="subscriptionPeriod" [(ngModel)]="newSubscription.subscriptionPeriodId">
+            <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods" [value]="subscriptionPeriod.value">
+              {{ subscriptionPeriod.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button (click)="addSubscription()">add</button>
 
       </mat-card-content>
 

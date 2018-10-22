@@ -19,6 +19,8 @@ export class MemberService {
   }
 
   private memberUrl = '/api/members';
+  private membershipTypesUrl = '/api/membership-types';
+  private subscriptionPeriodsUrl = '/api/subscription-periods';
 
   addMember(member: Member): Observable<Member> {
     return this.http.post<Member>(this.memberUrl, member, httpOptions).pipe(
@@ -41,6 +43,14 @@ export class MemberService {
     return this.http.get<Member>(url, this.getOptions()).pipe(
       tap(_ => this.log(`fetched member id=${id}`)),
       catchError(this.handleError<Member>(`getMember id=${id}`))
+    );
+  }
+
+  getSubscriptionPeriods(): Observable<Member> {
+    const url = `${this.subscriptionPeriodsUrl}`;
+    return this.http.get<Member>(url, this.getOptions()).pipe(
+      tap(_ => this.log(`fetched subscription periods`)),
+      catchError(this.handleError<Member>(`getSubscriptionPeriods`))
     );
   }
 

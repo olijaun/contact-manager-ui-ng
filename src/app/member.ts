@@ -2,7 +2,7 @@ export class Member {
   public id: string;
   public firstName: string;
   public lastNameOrCompanyName: string;
-  public subscriptions: Subscription[];
+  public subscriptions: Subscription[] = [];
 }
 
 export class Subscription {

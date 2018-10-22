@@ -1,13 +1,10 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
-import {UUID} from "angular2-uuid";
-import {ContactData, Person, StreetAddress} from "../person";
 import {Location} from "@angular/common";
 import {ActivatedRoute} from "@angular/router";
-import {PersonService} from "../person.service";
 import {NgForm} from "@angular/forms";
-import {Member} from "../member";
-import {isNil} from 'lodash';
+import {Member, Subscription} from "../member";
 import {MemberService} from "../member.service";
+import {MatTableDataSource} from "@angular/material";
 
 @Component({
   selector: 'app-member-detail',
@@ -17,6 +14,7 @@ import {MemberService} from "../member.service";
 export class MemberDetailComponent implements OnInit {
 
   member: Member;
+  displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
 
   @ViewChild('basicForm') public basicForm: NgForm;
 
@@ -25,6 +23,16 @@ export class MemberDetailComponent implements OnInit {
     private memberService: MemberService,
     private location: Location
   ) {
+
+    this.member = new Member();
+
+    var sub1 = new Subscription();
+    sub1.id = "123";
+    sub1.subscriptionTypeId ="type";
+    sub1.subscriptionPeriodId = "period";
+    sub1.memberId = "mbr";
+
+    this.member.subscriptions = [ sub1 ];
 
   }
 
@@ -42,6 +50,7 @@ export class MemberDetailComponent implements OnInit {
     this.memberService.getMember(id)
       .subscribe(member => {
         this.member = member;
+        //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
       });
   }
 

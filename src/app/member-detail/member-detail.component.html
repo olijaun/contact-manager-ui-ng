@@ -32,26 +32,29 @@
       <mat-card-content class="example-container">
 
         <mat-form-field appearance="standard">
+          <mat-label>Subscription Period</mat-label>
+          <mat-select name="subscriptionPeriod"
+                      [(ngModel)]="newSubscription.subscriptionPeriodId"
+                      (selectionChange)="loadSubscriptionTypes()">
+            <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods.subscriptionPeriods" [value]="subscriptionPeriod.id">
+              {{ subscriptionPeriod.name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="standard">
           <mat-label>Subscription Type</mat-label>
           <mat-select name="subscriptionType" [(ngModel)]="newSubscription.subscriptionTypeId">
-            <mat-option *ngFor="let subscriptionType of subscriptionTypes" [value]="subscriptionType.value">
-              {{ subscriptionType.viewValue }}
+            <mat-option *ngFor="let subscriptionType of subscriptionTypes.subscriptionTypes" [value]="subscriptionType.id">
+              {{ subscriptionType.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-        <mat-form-field appearance="standard">
-          <mat-label>Subscription Period</mat-label>
-          <mat-select name="subscriptionPeriod" [(ngModel)]="newSubscription.subscriptionPeriodId">
-            <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods" [value]="subscriptionPeriod.value">
-              {{ subscriptionPeriod.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+
 
         <button mat-raised-button (click)="addSubscription()">add</button>
 
       </mat-card-content>
-
 
 
       <table mat-table [dataSource]="member.subscriptions" class="mat-elevation-z8">
@@ -61,14 +64,14 @@
           <td mat-cell *matCellDef="let element">{{element.id}}</td>
         </ng-container>
 
-        <ng-container matColumnDef="subscriptionTypeId">
-          <th mat-header-cell *matHeaderCellDef>Subscription Type</th>
-          <td mat-cell *matCellDef="let element">{{element.subscriptionTypeId}}</td>
-        </ng-container>
-
         <ng-container matColumnDef="subscriptionPeriodId">
           <th mat-header-cell *matHeaderCellDef>Subscription Period</th>
           <td mat-cell *matCellDef="let element">{{element.subscriptionPeriodId}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="subscriptionTypeId">
+          <th mat-header-cell *matHeaderCellDef>Membership Type</th>
+          <td mat-cell *matCellDef="let element">{{element.subscriptionTypeId}}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

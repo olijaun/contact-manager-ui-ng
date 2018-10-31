@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
-import {Member} from "./member";
+import {Member, SubscriptionType, SubscriptionPeriods, SubscriptionTypes} from "./member";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -46,11 +46,19 @@ export class MemberService {
     );
   }
 
-  getSubscriptionPeriods(): Observable<Member> {
+  getSubscriptionTypes(subscriptionPeriodId : string): Observable<SubscriptionTypes> {
+    const url = `${this.subscriptionPeriodsUrl}/` + subscriptionPeriodId + '/types';
+    return this.http.get<SubscriptionTypes>(url, this.getOptions()).pipe(
+      tap(_ => this.log(`fetched subscription types for period ` + subscriptionPeriodId)),
+      catchError(this.handleError<SubscriptionTypes>(`getSubscriptionTypes`))
+    );
+  }
+
+  getSubscriptionPeriods(): Observable<SubscriptionPeriods> {
     const url = `${this.subscriptionPeriodsUrl}`;
-    return this.http.get<Member>(url, this.getOptions()).pipe(
+    return this.http.get<SubscriptionPeriods>(url, this.getOptions()).pipe(
       tap(_ => this.log(`fetched subscription periods`)),
-      catchError(this.handleError<Member>(`getSubscriptionPeriods`))
+      catchError(this.handleError<SubscriptionPeriods>(`getSubscriptionPeriods`))
     );
   }
 

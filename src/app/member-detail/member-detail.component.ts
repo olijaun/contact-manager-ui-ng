@@ -2,10 +2,17 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
 import {ActivatedRoute} from "@angular/router";
 import {NgForm} from "@angular/forms";
-import {Member, Subscription, SubscriptionPeriods, SubscriptionTypes} from "../member";
+import {
+  Member,
+  Subscription,
+  SubscriptionPeriod,
+  SubscriptionPeriods,
+  SubscriptionType,
+  SubscriptionTypes
+} from "../member";
 import {MemberService} from "../member.service";
 import {UUID} from "angular2-uuid";
-import {isNull} from "util";
+import {isNull, isNullOrUndefined} from "util";
 
 @Component({
   selector: 'app-member-detail',
@@ -15,10 +22,11 @@ import {isNull} from "util";
 export class MemberDetailComponent implements OnInit {
 
   member: Member;
-  displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
-  newSubscription: Subscription;
+  // displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
+  displayedColumns = ['id', 'subscriptionPeriodId', 'subscriptionTypeId'];
+  selectedPeriod: SubscriptionPeriod;
+  selectedSubscriptionType: SubscriptionType;
   subscriptionPeriods: SubscriptionPeriods;
-  subscriptionTypes: SubscriptionTypes;
 
   @ViewChild('basicForm') public basicForm: NgForm;
 
@@ -29,17 +37,12 @@ export class MemberDetailComponent implements OnInit {
   ) {
 
     this.member = new Member();
-    this.newSubscription = new Subscription();
+    this.member.subscriptions = [];
 
-    var sub1 = new Subscription();
-    sub1.id = "123";
-    sub1.subscriptionTypeId = "type";
-    sub1.subscriptionPeriodId = "period";
-    sub1.memberId = "mbr";
+    this.selectedPeriod = new SubscriptionPeriod();
+    this.selectedSubscriptionType = new SubscriptionType();
 
-    this.member.subscriptions = [sub1];
     this.subscriptionPeriods = new SubscriptionPeriods();
-    this.subscriptionTypes = new SubscriptionTypes();
   }
 
   ngOnInit() {
@@ -48,7 +51,6 @@ export class MemberDetailComponent implements OnInit {
 
     this.loadMember();
     this.loadSubscriptionPeriods();
-    this.loadSubscriptionTypes();
   }
 
   loadMember(): void {
@@ -58,21 +60,60 @@ export class MemberDetailComponent implements OnInit {
     this.memberService.getMember(id)
       .subscribe(member => {
         this.member = member;
-        //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
       });
   }
 
-  loadSubscriptionTypes(): void {
+  subscriptionPeriodById(subscriptionPeriodId : string): SubscriptionPeriod {
 
-    if(isNull(this.newSubscription.subscriptionPeriodId)) {
-      return;
+    // not a function: why?
+    //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
+
+    var periods = this.subscriptionPeriods.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
+    if(periods.length === 0) {
+      return null;
+    }
+    return periods[0];
+  }
+
+  subscriptionPeriodNameById(subscriptionPeriodId : string): string {
+
+    // not a function: why?
+    //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
+    //console.log("subscriptionPeriodNameById: " + subscriptionPeriodId);
+    var period = this.subscriptionPeriodById(subscriptionPeriodId);
+    if(isNullOrUndefined(period)) {
+      return "?";
+    }
+    return period.name;
+  }
+
+  subscriptionTypeNameById(subscriptionType : SubscriptionType): string {
+
+    console.log("subscriptionTypeNameById: " + subscriptionType.id + ", period: " + subscriptionType.subscriptionPeriodId);
+
+    if(isNullOrUndefined(subscriptionType)) {
+      return "1?";
     }
 
-    this.memberService.getSubscriptionTypes(this.newSubscription.subscriptionPeriodId)
-      .subscribe(subscriptionTypes => {
-        this.subscriptionTypes = subscriptionTypes;
-        //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
-      });
+    var period = this.subscriptionPeriodById(subscriptionType.subscriptionPeriodId);
+    if(isNullOrUndefined(period)) {
+      return "2?";
+    }
+    var subscriptionTypes = period.subscriptionTypes.filter(t => t.id == subscriptionType.id);
+    if(subscriptionTypes.length === 0) {
+      return "3?";
+    }
+    return subscriptionTypes[0].name;
+  }
+
+  subscriptionTypes(): SubscriptionType[] {
+
+    var period = this.subscriptionPeriodById(this.selectedPeriod.id);
+    if(isNullOrUndefined(period)) {
+      return [];
+    }
+
+    return period.subscriptionTypes;
   }
 
   loadSubscriptionPeriods(): void {
@@ -86,14 +127,15 @@ export class MemberDetailComponent implements OnInit {
 
   addSubscription(): void {
 
-    this.newSubscription.id = UUID.UUID();
-    this.newSubscription.memberId = this.member.id;
-    this.newSubscription.subscriptionPeriodId
-
-    this.member.subscriptions = [...this.member.subscriptions, this.newSubscription];
-
-
-    console.log("subscriptions: " + this.member.subscriptions);
+    // var newSubscription = new Subscription();
+    // newSubscription.id = UUID.UUID();
+    // newSubscription.memberId = this.member.id;
+    // newSubscription.
+    //
+    // this.member.subscriptions = [...this.member.subscriptions, newSubscription];
+    //
+    //
+    // console.log("subscriptions: " + this.member.subscriptions);
   }
 
 

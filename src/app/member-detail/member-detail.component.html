@@ -33,10 +33,8 @@
 
         <mat-form-field appearance="standard">
           <mat-label>Subscription Period</mat-label>
-          <mat-select name="subscriptionPeriod"
-                      [(ngModel)]="newSubscription.subscriptionPeriodId"
-                      (selectionChange)="loadSubscriptionTypes()">
-            <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods.subscriptionPeriods" [value]="subscriptionPeriod.id">
+          <mat-select name="subscriptionPeriod" [(ngModel)]="selectedPeriod">
+            <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods.subscriptionPeriods" [value]="subscriptionPeriod">
               {{ subscriptionPeriod.name }}
             </mat-option>
           </mat-select>
@@ -44,13 +42,12 @@
 
         <mat-form-field appearance="standard">
           <mat-label>Subscription Type</mat-label>
-          <mat-select name="subscriptionType" [(ngModel)]="newSubscription.subscriptionTypeId">
-            <mat-option *ngFor="let subscriptionType of subscriptionTypes.subscriptionTypes" [value]="subscriptionType.id">
+          <mat-select name="subscriptionType" [(ngModel)]="selectedSubscriptionType">
+            <mat-option *ngFor="let subscriptionType of selectedPeriod.subscriptionTypes" [value]="subscriptionType">
               {{ subscriptionType.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
-
 
         <button mat-raised-button (click)="addSubscription()">add</button>
 
@@ -61,17 +58,17 @@
 
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef>Id</th>
-          <td mat-cell *matCellDef="let element">{{element.id}}</td>
+          <td mat-cell *matCellDef="let element">{{element.firstName}}</td>
         </ng-container>
 
         <ng-container matColumnDef="subscriptionPeriodId">
           <th mat-header-cell *matHeaderCellDef>Subscription Period</th>
-          <td mat-cell *matCellDef="let element">{{element.subscriptionPeriodId}}</td>
+          <td mat-cell *matCellDef="let element">{{ subscriptionPeriodNameById(element.subscriptionPeriodId) }}</td>
         </ng-container>
 
         <ng-container matColumnDef="subscriptionTypeId">
-          <th mat-header-cell *matHeaderCellDef>Membership Type</th>
-          <td mat-cell *matCellDef="let element">{{element.subscriptionTypeId}}</td>
+          <th mat-header-cell *matHeaderCellDef>Subscription Type</th>
+          <td mat-cell *matCellDef="let element">{{ subscriptionTypeNameById(element) }}</td>
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

@@ -14,6 +14,10 @@ export class Subscription {
 
 export class SubscriptionTypes {
   public subscriptionTypes: SubscriptionType[] = [];
+
+  public findById(subscriptionTypeId: string): SubscriptionType {
+    return this.subscriptionTypes.filter(st => st.id === subscriptionTypeId)[0];
+  }
 }
 
 export class SubscriptionType {
@@ -28,6 +32,10 @@ export class SubscriptionType {
 
 export class SubscriptionPeriods {
   public subscriptionPeriods: SubscriptionPeriod[] = [];
+
+  public findById(subscriptionPeriodId: string): SubscriptionPeriod {
+    return this.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId)[0];
+  }
 }
 
 export class SubscriptionPeriod {
@@ -36,4 +44,6 @@ export class SubscriptionPeriod {
   public endDate: string;
   public name: string;
   public description: string;
+
+  public subscriptionTypes: SubscriptionType[];
 }

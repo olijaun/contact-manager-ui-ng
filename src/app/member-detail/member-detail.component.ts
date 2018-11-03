@@ -23,7 +23,7 @@ export class MemberDetailComponent implements OnInit {
 
   member: Member;
   // displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
-  displayedColumns = ['id', 'subscriptionPeriodId', 'subscriptionTypeId'];
+  displayedColumns = ['subscriptionPeriodId', 'subscriptionTypeId'];
   selectedPeriod: SubscriptionPeriod;
   selectedSubscriptionType: SubscriptionType;
   subscriptionPeriods: SubscriptionPeriods;
@@ -87,19 +87,25 @@ export class MemberDetailComponent implements OnInit {
     return period.name;
   }
 
-  subscriptionTypeNameById(subscriptionType : SubscriptionType): string {
+  subscriptionTypeNameById(subscription : Subscription): string {
 
-    console.log("subscriptionTypeNameById: " + subscriptionType.id + ", period: " + subscriptionType.subscriptionPeriodId);
+    console.log("subscription: " + subscription.id + ", period: " + subscription.subscriptionPeriodId);
 
-    if(isNullOrUndefined(subscriptionType)) {
+    if(isNullOrUndefined(subscription)) {
       return "1?";
     }
 
-    var period = this.subscriptionPeriodById(subscriptionType.subscriptionPeriodId);
+    var period = this.subscriptionPeriodById(subscription.subscriptionPeriodId);
     if(isNullOrUndefined(period)) {
       return "2?";
     }
-    var subscriptionTypes = period.subscriptionTypes.filter(t => t.id == subscriptionType.id);
+
+    var subscriptionTypes = period.subscriptionTypes.filter(t => {
+      console.log("filter: " + t.id + " === " + subscription.subscriptionTypeId);
+      return t.id === subscription.subscriptionTypeId;
+    });
+
+    console.log("sub types: " + JSON.stringify(period.subscriptionTypes));
     if(subscriptionTypes.length === 0) {
       return "3?";
     }
@@ -127,15 +133,18 @@ export class MemberDetailComponent implements OnInit {
 
   addSubscription(): void {
 
-    // var newSubscription = new Subscription();
-    // newSubscription.id = UUID.UUID();
-    // newSubscription.memberId = this.member.id;
-    // newSubscription.
-    //
-    // this.member.subscriptions = [...this.member.subscriptions, newSubscription];
-    //
-    //
-    // console.log("subscriptions: " + this.member.subscriptions);
+    var newSubscription = new Subscription();
+    newSubscription.id = UUID.UUID();
+    newSubscription.memberId = this.member.id;
+    newSubscription.subscriptionPeriodId = this.selectedPeriod.id;
+    newSubscription.subscriptionTypeId = this.selectedSubscriptionType.id;
+
+    console.log("newSubscription: " + JSON.stringify(newSubscription));
+
+    this.member.subscriptions = [...this.member.subscriptions, newSubscription];
+
+
+    console.log("subscriptions: " + this.member.subscriptions);
   }
 
 

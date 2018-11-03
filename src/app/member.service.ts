@@ -62,9 +62,9 @@ export class MemberService {
     );
   }
 
-  updateMember(member: Member): Observable<any> {
+  updateMember(member: Member): Observable<Member> {
     console.log(this.memberUrl + '/' + member.id);
-    console.log(JSON.stringify(this.memberUrl));
+    console.log(JSON.stringify(member));
     return this.http.put(this.memberUrl + '/' + member.id, member, this.getOptions()).pipe(
       tap(_ => this.log(`updated member id=${member.id}`)),
       catchError(this.handleError<any>('updateMember'))

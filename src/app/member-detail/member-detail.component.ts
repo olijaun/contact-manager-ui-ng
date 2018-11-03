@@ -89,25 +89,19 @@ export class MemberDetailComponent implements OnInit {
 
   subscriptionTypeNameById(subscription : Subscription): string {
 
-    console.log("subscription: " + subscription.id + ", period: " + subscription.subscriptionPeriodId);
-
     if(isNullOrUndefined(subscription)) {
-      return "1?";
+      return "?";
     }
 
     var period = this.subscriptionPeriodById(subscription.subscriptionPeriodId);
     if(isNullOrUndefined(period)) {
-      return "2?";
+      return "?";
     }
 
-    var subscriptionTypes = period.subscriptionTypes.filter(t => {
-      console.log("filter: " + t.id + " === " + subscription.subscriptionTypeId);
-      return t.id === subscription.subscriptionTypeId;
-    });
+    var subscriptionTypes = period.subscriptionTypes.filter(t => t.id === subscription.subscriptionTypeId);
 
-    console.log("sub types: " + JSON.stringify(period.subscriptionTypes));
     if(subscriptionTypes.length === 0) {
-      return "3?";
+      return "?";
     }
     return subscriptionTypes[0].name;
   }

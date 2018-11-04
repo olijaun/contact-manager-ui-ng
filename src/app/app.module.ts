@@ -1,6 +1,6 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
 import {ContactsComponent} from './contacts/contacts.component';
@@ -59,6 +59,7 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
     BrowserModule,
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule, // see https://stackoverflow.com/questions/43220348/cant-bind-to-formcontrol-since-it-isnt-a-known-property-of-input-angular
     AppRoutingModule,
     HttpClientModule,
     // The HttpClientInMemoryWebApiModule module intercepts HTTP requests

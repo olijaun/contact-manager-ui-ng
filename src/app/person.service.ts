@@ -38,7 +38,7 @@ export class PersonService {
 
   getPerson(id: string): Observable<Person> {
     const url = `${this.personsUrl}/${id}`;
-    return this.http.get<Person>(url).pipe(
+    return this.http.get<Person>(url, this.getOptions()).pipe(
       tap(_ => this.log(`fetched contact id=${id}`)),
       catchError(this.handleError<Person>(`getContact id=${id}`))
     );

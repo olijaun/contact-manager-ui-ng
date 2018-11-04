@@ -23,8 +23,18 @@
           <input name="lastName" [(ngModel)]="member.lastNameOrCompanyName" matInput placeholder="" required>
         </mat-form-field>
 
+        <mat-form-field appearance="standard">
+          <mat-label>Address</mat-label>
+          <input name="address" [(ngModel)]="member.address" matInput placeholder="" required>
+        </mat-form-field>
+
       </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button (click)="editPersonClicked()">Edit Person</button>
+      </mat-card-actions>
     </mat-card>
+
     <mat-card class="example-container">
 
       <mat-card-title>Subscriptions</mat-card-title>

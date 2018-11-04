@@ -2,6 +2,7 @@ export class Member {
   public id: string;
   public firstName: string;
   public lastNameOrCompanyName: string;
+  public address: string;
   public subscriptions: Subscription[] = [];
 }
 

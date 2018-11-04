@@ -1,26 +1,41 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+///<reference path="../../../node_modules/moment/moment.d.ts"/>
+import {Component, OnInit} from '@angular/core';
 import {ContactData, Person, StreetAddress} from '../person';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {PersonService} from '../person.service';
-import {NgForm} from '@angular/forms';
+import {FormControl} from '@angular/forms';
 import {isNil} from 'lodash';
 import {UUID} from 'angular2-uuid';
+import {MAT_MOMENT_DATE_FORMATS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
+
+// Depending on whether rollup is used, moment needs to be imported differently.
+// Since Moment.js doesn't have a default export, we normally need to import using the `* as`
+// syntax. However, rollup creates a synthetic default module and we thus need to import it using
+// the `default as` syntax.
+import * as _moment from 'moment';
+import {isNullOrUndefined} from "util";
 
 @Component({
   selector: 'app-contact-detail',
   templateUrl: './person-detail.component.html',
-  styleUrls: ['./person-detail.component.css']
+  styleUrls: ['./person-detail.component.css'],
+  providers: [
+    // `MomentDateAdapter` and `MAT_MOMENT_DATE_FORMATS` can be automatically provided by importing
+    // `MatMomentDateModule` in your applications root module. We provide it at the component level
+    // here, due to limitations of our example generation script.
+    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+    {provide: MAT_DATE_FORMATS, useValue: MAT_MOMENT_DATE_FORMATS},
+  ]
 })
 export class PersonDetailComponent implements OnInit {
 
   person: Person;
+  birthDateControl = new FormControl(null);
   // basicData: BasicData;
   // streetAddress: StreetAddress;
   // contactData: ContactData;
-
-  @ViewChild('basicForm') public basicForm: NgForm;
-
   sexes = [
     {value: 'MALE', viewValue: 'Male'},
     {value: 'FEMALE', viewValue: 'Female'}
@@ -64,6 +79,9 @@ export class PersonDetailComponent implements OnInit {
     this.personService.getPerson(id)
       .subscribe(person => {
         this.person = person;
+        if(this.person.basicData != null) {
+          this.birthDateControl.setValue(_moment(this.person.basicData.birthDate));
+        }
 
         // if (isNil(this.person.streetAddress)) {
         //   this.streetAddress = new StreetAddress();
@@ -106,6 +124,15 @@ export class PersonDetailComponent implements OnInit {
     personToBeSaved.id = this.person.id;
     personToBeSaved.type = this.person.type;
     personToBeSaved.basicData = this.person.basicData;
+
+    var offset = new Date().getTimezoneOffset();
+    console.log(offset);
+
+    if(!isNullOrUndefined(this.birthDateControl.value)) {
+      var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
+      console.log("vvvvvvvvvvvvalue: " + formattedLocalDate);
+      personToBeSaved.basicData.birthDate = formattedLocalDate;
+    }
 
     // do not add empty entitites
     if (this.isEmptyStreetAddress(this.person.streetAddress)) {

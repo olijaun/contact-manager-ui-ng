@@ -1,6 +1,6 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {NgForm} from "@angular/forms";
 import {
   Member,
@@ -33,7 +33,8 @@ export class MemberDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private memberService: MemberService,
-    private location: Location
+    private location: Location,
+    private router: Router
   ) {
 
     this.member = new Member();
@@ -153,5 +154,9 @@ export class MemberDetailComponent implements OnInit {
 
   bla(error: any): void {
 
+  }
+
+  editPersonClicked() {
+    this.router.navigateByUrl('/person-detail/' + this.member.id); // TODO: why does location.go not work?
   }
 }

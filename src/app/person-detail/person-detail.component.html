@@ -34,11 +34,15 @@
         </mat-form-field>
 
         <mat-form-field *ngIf="isPerson()">
-          <input name="birthDate" matInput [matDatepicker]="picker" placeholder="Choose a date"
-                 [(ngModel)]="person.basicData.birthDate"
-                 disabled>
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker disabled="false"></mat-datepicker>
+          <input matInput [matDatepicker]="dp" placeholder="Birth date" [formControl]="birthDateControl">
+          <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+          <mat-datepicker #dp></mat-datepicker>
+
+          <!--<input name="birthDateControl" matInput [matDatepicker]="picker" placeholder="Choose a date"-->
+                 <!--[formControl]="birthDateControl"-->
+                 <!--disabled>-->
+          <!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
+          <!--<mat-datepicker #picker disabled="false"></mat-datepicker>-->
         </mat-form-field>
 
         <mat-form-field *ngIf="isPerson()">
@@ -64,11 +68,11 @@
     <mat-card-content class="example-container">
       <mat-form-field appearance="standard">
         <mat-label>E-Mail Address</mat-label>
-        <input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" required>
+        <input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" >
       </mat-form-field>
       <mat-form-field appearance="standard">
         <mat-label>Phone Number</mat-label>
-        <input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" required>
+        <input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" >
       </mat-form-field>
     </mat-card-content>
   </mat-card>

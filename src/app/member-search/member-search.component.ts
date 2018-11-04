@@ -16,7 +16,8 @@ export class MemberSearchComponent implements OnInit {
   members$: Observable<Member[]>;
   private searchTerms = new Subject<string>();
 
-  displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
+  //displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
+  displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address'];
 
   constructor(private memberService: MemberService, private location: Location, private router: Router) {
   }

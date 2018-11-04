@@ -5,6 +5,15 @@
       <input matInput placeholder="Lastname or firstname" #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
     </mat-form-field>
 
+    <mat-form-field appearance="standard">
+      <mat-label>Subscription Period</mat-label>
+      <mat-select name="subscriptionPeriod" [(ngModel)]="selectedPeriod" (selectionChange)="periodChanged($event.value)">
+        <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods.subscriptionPeriods" [value]="subscriptionPeriod">
+          {{ subscriptionPeriod.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
   </div>
 
   <table mat-table [dataSource]="members$" class="mat-elevation-z8">

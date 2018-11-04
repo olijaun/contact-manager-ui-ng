@@ -5,6 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
 import {Member, SubscriptionType, SubscriptionPeriods, SubscriptionTypes} from "./member";
+import {isNullOrUndefined} from "util";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -81,17 +82,16 @@ export class MemberService {
     );
   }
 
-  searchMembers(term: string): Observable<Member[]> {
-    if (!term.trim()) {
+  searchMembers(term: string, subscriptionPeriodId: string): Observable<Member[]> {
+    if (!term.trim() && !subscriptionPeriodId.trim()) {
       // if not search term, return empty hero array.
       return of([]);
     }
 
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
-    console.log('hello: ' + this.oauthService.getIdToken());
 
-    return this.http.get<Member[]>(`${this.memberUrl}/?searchString=${term}`, this.getOptions()).pipe(
-      tap(_ => this.log(`found members matching "${term}"`)),
+    return this.http.get<Member[]>(`${this.memberUrl}/?searchString=${term}&subscriptionPeriodId=${subscriptionPeriodId}`, this.getOptions()).pipe(
+      tap(_ => this.log(`found members matching "${term} and ${subscriptionPeriodId}"`)),
       catchError(this.handleError<Member[]>('searchMembers', []))
     );
   }

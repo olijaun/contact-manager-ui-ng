@@ -3,8 +3,10 @@ import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
 import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
 import {Location} from "@angular/common";
-import {Member, SubscriptionPeriod, SubscriptionPeriods} from "../member";
+import {Member, Subscription, SubscriptionPeriod, SubscriptionPeriods} from "../member";
 import {MemberService} from "../member.service";
+import {MemberSearchCriteria} from "./MemberSearchCriteria";
+import {isNullOrUndefined} from "util";
 
 @Component({
   selector: 'app-member-search',
@@ -14,25 +16,35 @@ import {MemberService} from "../member.service";
 export class MemberSearchComponent implements OnInit {
 
   members$: Observable<Member[]>;
-  private searchTerms = new Subject<string>();
+  private searchTerms = new Subject<MemberSearchCriteria>();
   subscriptionPeriods: SubscriptionPeriods;
   selectedPeriod: SubscriptionPeriod;
   searchTerm: string;
+  searchCriteria = new MemberSearchCriteria();
 
   //displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
-  displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address'];
+  displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address', 'subscriptionType'];
 
   constructor(private memberService: MemberService, private location: Location, private router: Router) {
     this.subscriptionPeriods = new SubscriptionPeriods();
     this.selectedPeriod = new SubscriptionPeriod();
     this.selectedPeriod.id = "";
     this.searchTerm = "";
+
+    this.searchCriteria.searchString = "";
+    this.searchCriteria.periodId = "";
   }
 
   // Push a search term into the observable stream.
   search(term: string): void {
-    this.searchTerm = term;
-    this.searchTerms.next(term);
+    console.log('search term: ' + term);
+    this.searchCriteria.searchString = term;
+
+    var c = new MemberSearchCriteria();
+    c.searchString = this.searchCriteria.searchString;
+    c.periodId = this.searchCriteria.periodId;
+
+    this.searchTerms.next(c);
   }
 
   ngOnInit(): void {
@@ -44,7 +56,7 @@ export class MemberSearchComponent implements OnInit {
       distinctUntilChanged(),
 
       // switch to new search observable each time the term changes
-      switchMap((term: string) => this.memberService.searchMembers(term, this.selectedPeriod.id)),
+      switchMap((term: MemberSearchCriteria) => this.memberService.searchMembers(term.searchString, this.selectedPeriod.id)),
     );
 
     this.loadSubscriptionPeriods();
@@ -57,8 +69,13 @@ export class MemberSearchComponent implements OnInit {
   }
 
   periodChanged(period: SubscriptionPeriod): void {
-    this.searchTerms.next(this.searchTerm);
-    //this.members$ = this.memberService.searchMembers(this.searchTerm, this.selectedPeriod.id);
+    // this.searchCriteria.periodId = period.id;
+    // this.searchTerms.next(this.searchCriteria);
+    var c = new MemberSearchCriteria();
+    c.searchString = this.searchCriteria.searchString;
+    c.periodId = period.id;
+    this.searchTerms.next(c);
+    console.log('period changed');
   }
 
   loadSubscriptionPeriods(): void {
@@ -68,5 +85,44 @@ export class MemberSearchComponent implements OnInit {
         this.subscriptionPeriods = subscriptionPeriods;
         //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
       });
+  }
+
+  subscriptionPeriodById(subscriptionPeriodId : string): SubscriptionPeriod {
+
+    // not a function: why?
+    //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
+
+    var periods = this.subscriptionPeriods.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
+    if(periods.length === 0) {
+      return null;
+    }
+    return periods[0];
+  }
+
+  subscriptionNameByMember(member : Member): string {
+
+    if(isNullOrUndefined(member)) {
+      return "?";
+    }
+
+    var period = this.selectedPeriod;
+    if(isNullOrUndefined(period)) {
+      return "?";
+    }
+
+    var subscriptions = member.subscriptions.filter(s => s.subscriptionPeriodId === this.selectedPeriod.id);
+
+    if(subscriptions.length == 0) {
+      return "?";
+    }
+    // TODO: a user might have multiple subscriptions for the same period in theory
+    var subscription = subscriptions[0];
+
+    var subscriptionTypes = period.subscriptionTypes.filter(t => t.id === subscription.subscriptionTypeId);
+
+    if(subscriptionTypes.length === 0) {
+      return "?";
+    }
+    return subscriptionTypes[0].name;
   }
 }

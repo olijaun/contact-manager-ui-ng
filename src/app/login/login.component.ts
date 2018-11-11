@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
+import {Claims} from "./claims";
 
 @Component({
   selector: 'login',
@@ -18,8 +19,13 @@ export class LoginComponent {
     this.oauthService.logOut();
   }
 
+  public isLoggedIn() : boolean {
+    return this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken();
+  }
+
   public get name() {
-    let claims = this.oauthService.getIdentityClaims();
+
+    var claims = this.oauthService.getIdentityClaims() as Claims;
     if (!claims) return null;
     return claims.given_name;
   }

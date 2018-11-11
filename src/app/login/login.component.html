@@ -1,17 +1,19 @@
-<h1 *ngIf="!name">
-  Hallo
-</h1>
-<h1 *ngIf="name">
-  Hallo, {{name}}
-</h1>
+<div class="container">
 
-<button class="btn btn-default" (click)="login()">
-  Login
-</button>
-<button class="btn btn-default" (click)="logoff()">
-  Logout
-</button>
+  <mat-card class="example-container">
 
-<div>
-  Username/Passwort zum Testen: max/geheima
+    <mat-card-title>Welcome to Club Manager</mat-card-title>
+
+    <mat-card-content class="example-container" *ngIf="isLoggedIn()">
+      You are currently logged in as {{ name }}.
+    </mat-card-content>
+    <mat-card-content class="example-container" *ngIf="!isLoggedIn()">
+      You are currently not logged in.
+    </mat-card-content>
+
+    <mat-card-actions>
+      <button mat-button (click)="login()" [disabled]="isLoggedIn()">Login</button>
+      <!--<button mat-button (click)="logoff()">Logout</button>-->
+    </mat-card-actions>
+  </mat-card>
 </div>

@@ -12,7 +12,7 @@ import { authConfig } from './auth.config';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  public title = 'Contact Manager';
+  public title = 'Club Manager';
 
 
   constructor(private http: HttpClient, private oauthService: OAuthService) {
@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   private configureWithNewConfigApi() {
     this.oauthService.configure(authConfig);
     this.oauthService.tokenValidationHandler = new JwksValidationHandler();
-    this.oauthService.loadDiscoveryDocumentAndTryLogin();
+    this.oauthService.loadDiscoveryDocumentAndLogin();
   }
 
   ngOnInit() {

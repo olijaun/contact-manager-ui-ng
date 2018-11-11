@@ -3,16 +3,13 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
 import {HttpClientModule} from '@angular/common/http';
-import {ContactsComponent} from './contacts/contacts.component';
 import {PersonDetailComponent} from './person-detail/person-detail.component';
 import {MessagesComponent} from './messages/messages.component';
 import {AppRoutingModule} from './app-routing.module';
-import {DashboardComponent} from './dashboard/dashboard.component';
 // import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
 // import {InMemoryDataService} from './in-memory-data.service';
-import {ContactSearchComponent} from './contact-search/contact-search.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MyNavComponent} from './my-nav/my-nav.component';
+import {NavigationComponent} from './navigation/navigation.component';
 import {LayoutModule} from '@angular/cdk/layout';
 import {
   MatButtonModule,
@@ -32,8 +29,7 @@ import {
   MatTableModule,
   MatToolbarModule
 } from '@angular/material';
-import {MyDashboardComponent} from './my-dashboard/my-dashboard.component';
-import {MyTableComponent} from './my-table/my-table.component';
+import {LoginComponent} from './login/login.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import {RouterModule} from '@angular/router';
 import { BASE_URL } from './app.tokens';
@@ -44,14 +40,10 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
 @NgModule({
   declarations: [
     AppComponent,
-    ContactsComponent,
     PersonDetailComponent,
     MessagesComponent,
-    DashboardComponent,
-    ContactSearchComponent,
-    MyNavComponent,
-    MyDashboardComponent,
-    MyTableComponent,
+    NavigationComponent,
+    LoginComponent,
     MemberSearchComponent,
     MemberDetailComponent
   ],

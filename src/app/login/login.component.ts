@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { OAuthService } from 'angular-oauth2-oidc';
 
 @Component({
-  selector: 'my-dashboard',
-  templateUrl: './my-dashboard.component.html',
-  styleUrls: ['./my-dashboard.component.css']
+  selector: 'login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
 })
-export class MyDashboardComponent {
+export class LoginComponent {
   constructor(private oauthService: OAuthService) {
   }
 
@@ -21,6 +21,6 @@ export class MyDashboardComponent {
   public get name() {
     let claims = this.oauthService.getIdentityClaims();
     if (!claims) return null;
-    return "bla"; //claims.given_name;
+    return claims.given_name;
   }
 }

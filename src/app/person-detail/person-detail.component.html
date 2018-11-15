@@ -7,109 +7,157 @@
   <p>
     <mat-label>Id: {{person.id}}</mat-label>
   </p>
-  <form (ngSubmit)="onSubmit()" #basicForm="ngForm">
+  <form (ngSubmit)="save(personDetailForm.value)" [formGroup]="personDetailForm">
+
+    <label class="label">
+      <div *ngFor="let msg of unmappedErrors">
+        <mat-card class="error-card">
+          Errors occured: {{ msg }}
+        </mat-card>
+      </div>
+    </label>
+
     <mat-card class="example-container">
 
       <mat-card-title>Basic data</mat-card-title>
 
       <mat-card-content class="example-container">
 
-        <mat-form-field appearance="standard">
-          <mat-label>Type</mat-label>
-          <mat-select name="contactType" [(ngModel)]="person.type" [disabled]="!this.isNew()">
-            <mat-option *ngFor="let contactType of types" [value]="contactType.value">
-              {{ contactType.viewValue }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="standard" *ngIf="isPerson()">
+        <!--<mat-form-field appearance="standard">-->
+        <!--<mat-label>Type</mat-label>-->
+        <!--<mat-select name="contactType" [(ngModel)]="person.type" [disabled]="!this.isNew()">-->
+        <!--<mat-option *ngFor="let contactType of types" [value]="contactType.value">-->
+        <!--{{ contactType.viewValue }}-->
+        <!--</mat-option>-->
+        <!--</mat-select>-->
+        <!--</mat-form-field>-->
+        <mat-form-field appearance="outline" *ngIf="isPerson()" class="component">
           <mat-label>First name</mat-label>
-          <input name="firstName" [(ngModel)]="person.basicData.name.firstName" matInput placeholder="">
+          <input name="firstName" matInput placeholder="First Name" formControlName="firstName">
+          <mat-error *ngFor="let validation of validation_messages.firstName">
+            <mat-error class="error-message"
+                       *ngIf="personDetailForm.get('firstName').hasError(validation.type) && (personDetailForm.get('firstName').dirty || personDetailForm.get('firstName').touched)">
+              {{validation.message}}
+            </mat-error>
+          </mat-error>
         </mat-form-field>
 
-        <mat-form-field appearance="standard">
+        <mat-form-field appearance="outline">
           <mat-label>Last name</mat-label>
-          <input name="lastName" [(ngModel)]="person.basicData.name.lastNameOrCompanyName" matInput placeholder="" required>
+          <input name="lastName" matInput placeholder="Last Name" formControlName="lastName">
+          <mat-error *ngFor="let validation of validation_messages.lastName">
+            <mat-error class="error-message"
+                       *ngIf="personDetailForm.get('lastName').hasError(validation.type) && (personDetailForm.get('lastName').dirty || personDetailForm.get('lastName').touched)">
+              {{validation.message}}
+            </mat-error>
+          </mat-error>
         </mat-form-field>
 
-        <mat-form-field *ngIf="isPerson()">
-          <input matInput [matDatepicker]="dp" placeholder="Birth date" [formControl]="birthDateControl">
+        <mat-form-field *ngIf="isPerson()" appearance="outline">
+
+          <input matInput [matDatepicker]="dp" placeholder="Birth date" formControlName="birthDate">
           <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
           <mat-datepicker #dp></mat-datepicker>
+          <mat-error *ngFor="let validation of validation_messages.birthDate">
+            <mat-error class="error-message"
+                       *ngIf="personDetailForm.get('birthDate').hasError(validation.type) && (personDetailForm.get('birthDate').dirty || personDetailForm.get('birthDate').touched)">
+              {{validation.message}}
+            </mat-error>
+          </mat-error>
 
-          <!--<input name="birthDateControl" matInput [matDatepicker]="picker" placeholder="Choose a date"-->
-                 <!--[formControl]="birthDateControl"-->
-                 <!--disabled>-->
-          <!--<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>-->
-          <!--<mat-datepicker #picker disabled="false"></mat-datepicker>-->
         </mat-form-field>
 
+        <!--<mat-form-field *ngIf="isPerson()" appearance="full-width">-->
+        <!--&lt;!&ndash;<mat-label>Sex</mat-label>&ndash;&gt;-->
+        <!--<mat-select name="sex" placeholder="Male or Female" [(ngModel)]="person.basicData.sex" formControlName="sex">-->
+        <!--<mat-option *ngFor="let sex of sexes" [value]="sex.value">-->
+        <!--{{ sex.viewValue }}-->
+        <!--</mat-option>-->
+        <!--</mat-select>-->
+        <!--<mat-error *ngFor="let validation of validation_messages.sex">-->
+        <!--<mat-error class="error-message"-->
+        <!--*ngIf="personDetailForm.get('sex').hasError(validation.type) && (personDetailForm.get('sex').dirty || personDetailForm.get('sex').touched)">-->
+        <!--{{validation.message}}-->
+        <!--</mat-error>-->
+        <!--</mat-error>-->
+        <!--</mat-form-field>-->
+
+
         <mat-form-field *ngIf="isPerson()">
-          <mat-label>Sex</mat-label>
-          <mat-select name="sex" placeholder="Male or Female" [(ngModel)]="person.basicData.sex" >
+          <mat-select placeholder="Sex" formControlName="sex">
             <mat-option *ngFor="let sex of sexes" [value]="sex.value">
               {{ sex.viewValue }}
             </mat-option>
           </mat-select>
+          <mat-error *ngFor="let validation of validation_messages.sex">
+            <mat-error class="error-message"
+                       *ngIf="personDetailForm.get('sex').hasError(validation.type) && (personDetailForm.get('sex').dirty || personDetailForm.get('sex').touched)">
+              {{validation.message}}
+            </mat-error>
+          </mat-error>
         </mat-form-field>
 
 
       </mat-card-content>
     </mat-card>
-    <!--<button type="submit" mat-raised-button [disabled]="!basicForm.form.valid">Submit</button>-->
+
+
+    <button class="submit-btn" color="primary" mat-raised-button type="submit" [disabled]="!personDetailForm.valid">Submit
+    </button>
+
   </form>
 
   <p></p>
 
-  <mat-card class="example-container">
-    <mat-card-title>Contact Info</mat-card-title>
+  <!--<mat-card class="example-container">-->
+  <!--<mat-card-title>Contact Info</mat-card-title>-->
 
-    <mat-card-content class="example-container">
-      <mat-form-field appearance="standard">
-        <mat-label>E-Mail Address</mat-label>
-        <input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" >
-      </mat-form-field>
-      <mat-form-field appearance="standard">
-        <mat-label>Phone Number</mat-label>
-        <input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" >
-      </mat-form-field>
-    </mat-card-content>
-  </mat-card>
+  <!--<mat-card-content class="example-container">-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>E-Mail Address</mat-label>-->
+  <!--<input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" >-->
+  <!--</mat-form-field>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>Phone Number</mat-label>-->
+  <!--<input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" >-->
+  <!--</mat-form-field>-->
+  <!--</mat-card-content>-->
+  <!--</mat-card>-->
 
-  <p></p>
+  <!--<p></p>-->
 
-  <mat-card class="example-container" >
-    <mat-card-title>Street Address</mat-card-title>
+  <!--<mat-card class="example-container" >-->
+  <!--<mat-card-title>Street Address</mat-card-title>-->
 
-    <mat-card-content class="example-container">
-      <div>
-        <mat-form-field appearance="standard">
-          <mat-label>Street</mat-label>
-          <input [(ngModel)]="person.streetAddress.street" matInput placeholder="" required>
-        </mat-form-field>
-        <mat-form-field appearance="standard">
-          <mat-label>Number</mat-label>
-          <input [(ngModel)]="person.streetAddress.streetNumber" matInput placeholder="">
-        </mat-form-field>
-      </div>
-      <div>
-        <mat-form-field appearance="standard">
-          <mat-label>Zip</mat-label>
-          <input [(ngModel)]="person.streetAddress.zip" matInput placeholder="" required>
-        </mat-form-field>
-        <mat-form-field appearance="standard">
-          <mat-label>City</mat-label>
-          <input [(ngModel)]="person.streetAddress.city" matInput placeholder="" required>
-        </mat-form-field>
-        <mat-form-field appearance="standard">
-          <mat-label>Country</mat-label>
-          <input [(ngModel)]="person.streetAddress.isoCountryCode" matInput placeholder="" required>
-        </mat-form-field>
-      </div>
-    </mat-card-content>
-  </mat-card>
+  <!--<mat-card-content class="example-container">-->
+  <!--<div>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>Street</mat-label>-->
+  <!--<input [(ngModel)]="person.streetAddress.street" matInput placeholder="" required>-->
+  <!--</mat-form-field>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>Number</mat-label>-->
+  <!--<input [(ngModel)]="person.streetAddress.streetNumber" matInput placeholder="">-->
+  <!--</mat-form-field>-->
+  <!--</div>-->
+  <!--<div>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>Zip</mat-label>-->
+  <!--<input [(ngModel)]="person.streetAddress.zip" matInput placeholder="" required>-->
+  <!--</mat-form-field>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>City</mat-label>-->
+  <!--<input [(ngModel)]="person.streetAddress.city" matInput placeholder="" required>-->
+  <!--</mat-form-field>-->
+  <!--<mat-form-field appearance="standard">-->
+  <!--<mat-label>Country</mat-label>-->
+  <!--<input [(ngModel)]="person.streetAddress.isoCountryCode" matInput placeholder="" required>-->
+  <!--</mat-form-field>-->
+  <!--</div>-->
+  <!--</mat-card-content>-->
+  <!--</mat-card>-->
   <p></p>
   <!--<button mat-raised-button (click)="goBack()">go back</button>-->
-  <button mat-raised-button (click)="save()">save</button>
+
+
 </div>

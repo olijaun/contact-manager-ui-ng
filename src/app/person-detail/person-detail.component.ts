@@ -4,12 +4,11 @@ import {ContactData, Person, StreetAddress} from '../person';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {PersonService} from '../person.service';
-import {FormControl} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, NgForm, Validators} from '@angular/forms';
 import {isNil} from 'lodash';
 import {UUID} from 'angular2-uuid';
 import {MAT_MOMENT_DATE_FORMATS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
-
 // Depending on whether rollup is used, moment needs to be imported differently.
 // Since Moment.js doesn't have a default export, we normally need to import using the `* as`
 // syntax. However, rollup creates a synthetic default module and we thus need to import it using
@@ -31,8 +30,32 @@ import {isNullOrUndefined} from "util";
 })
 export class PersonDetailComponent implements OnInit {
 
+  // https://angular-templates.io/tutorials/about/angular-forms-and-validations
+
+  personDetailForm: FormGroup;
   person: Person;
   birthDateControl = new FormControl(null);
+  submitted: boolean = false;
+  unmappedErrors: string[] = [];
+
+  validation_messages = {
+    'firstName': [
+      // {type: 'required', message: 'Full name is required'},
+      {type: 'incorrect', message: 'Komischer Fehler'}
+    ],
+    'lastName': [
+      {type: 'required', message: 'last name is required'},
+      {type: 'maxlength', message: 'last name cannot be more than 256 characters long'},
+    ],
+    'birthDate': [
+      // {type: 'required', message: 'Please insert your birthday'},
+    ],
+    'sex': [
+      {type: 'required', message: 'Please select your gender'},
+    ]
+  };
+
+
   // basicData: BasicData;
   // streetAddress: StreetAddress;
   // contactData: ContactData;
@@ -49,9 +72,15 @@ export class PersonDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private personService: PersonService,
-    private location: Location
+    private location: Location,
+    private fb: FormBuilder
   ) {
-
+    this.personDetailForm = this.fb.group({
+      firstName: new FormControl('', [Validators.maxLength(256)]),
+      lastName: new FormControl('', [Validators.required, Validators.maxLength(256)]),
+      birthDate: new FormControl(),
+      sex: new FormControl(this.sexes[0]),
+    });
   }
 
   ngOnInit() {
@@ -79,7 +108,7 @@ export class PersonDetailComponent implements OnInit {
     this.personService.getPerson(id)
       .subscribe(person => {
         this.person = person;
-        if(this.person.basicData != null) {
+        if (this.person.basicData != null) {
           this.birthDateControl.setValue(_moment(this.person.basicData.birthDate));
         }
 
@@ -113,7 +142,28 @@ export class PersonDetailComponent implements OnInit {
     return (isNil(contactData.emailAddress) && isNil(contactData.phoneNumber));
   }
 
-  save(): void {
+  save(f: NgForm): void {
+
+    console.log("save: " + f);
+
+    this.unmappedErrors = [];
+
+    this.personDetailForm.get('firstName').setErrors({
+      "incorrect": true
+    });
+
+    this.unmappedErrors.push("Ein Fehler... oh nein!")
+
+    return;
+
+    if (!this.personDetailForm.valid) {
+      // this.restService.create(this.form.value)
+      //   .subscribe(
+      //     entry => this.handleSubmitSuccess(entry),
+      //     error => this.handleSubmitError(error)
+      //   );
+    }
+    console.log("submit");
 
     if (this.isNew()) {
       this.person.id = UUID.UUID();
@@ -128,7 +178,7 @@ export class PersonDetailComponent implements OnInit {
     var offset = new Date().getTimezoneOffset();
     console.log(offset);
 
-    if(!isNullOrUndefined(this.birthDateControl.value)) {
+    if (!isNullOrUndefined(this.birthDateControl.value)) {
       var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
       console.log("vvvvvvvvvvvvalue: " + formattedLocalDate);
       personToBeSaved.basicData.birthDate = formattedLocalDate;

@@ -82,7 +82,6 @@
         <!--</mat-error>-->
         <!--</mat-form-field>-->
 
-
         <mat-form-field *ngIf="isPerson()">
           <mat-select placeholder="Sex" formControlName="sex">
             <mat-option *ngFor="let sex of sexes" [value]="sex.value">
@@ -101,63 +100,82 @@
       </mat-card-content>
     </mat-card>
 
+    <p></p>
+
+    <mat-card class="example-container">
+      <mat-card-title>Contact Info</mat-card-title>
+
+      <mat-card-content class="example-container">
+        <mat-form-field appearance="outline">
+          <mat-label>E-Mail Address</mat-label>
+          <input name="emailAddress" matInput placeholder="me@mail.com" formControlName="emailAddress">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Phone Number</mat-label>
+          <input name="phoneNumber" matInput placeholder="" formControlName="phoneNumber">
+        </mat-form-field>
+      </mat-card-content>
+    </mat-card>
+
+    <!--<p></p>-->
+    <div formGroupName="address">
+      <mat-card class="example-container">
+        <mat-card-title>Street Address</mat-card-title>
+
+        <mat-card-content class="example-container">
+          <div>
+            <mat-form-field appearance="standard">
+              <mat-label>Street</mat-label>
+              <input matInput placeholder="" formControlName="street">
+            </mat-form-field>
+            <mat-form-field appearance="standard">
+              <mat-label>Number</mat-label>
+              <input matInput placeholder="" formControlName="number">
+            </mat-form-field>
+          </div>
+          <div>
+            <mat-form-field appearance="standard">
+              <mat-label>Zip</mat-label>
+              <input matInput placeholder="" formControlName="zip">
+            </mat-form-field>
+            <mat-form-field appearance="standard">
+              <mat-label>City</mat-label>
+              <input matInput placeholder="" formControlName="city">
+            </mat-form-field>
+            <!--<mat-form-field appearance="standard">-->
+            <!--<mat-label>Country</mat-label>-->
+            <!--<input matInput placeholder="" formControlName="country">-->
+            <!--</mat-form-field>-->
+            <!--<mat-form-field appearance="standard">-->
+            <!--<mat-select placeholder="Country" formControlName="country">-->
+            <!--<mat-option *ngFor="let country of countries" [value]="country.Code">-->
+            <!--{{ country.Name }}-->
+            <!--</mat-option>-->
+            <!--</mat-select>-->
+            <!--</mat-form-field>-->
+            <mat-form-field class="example-full-width">
+              <input type="text"
+                     placeholder="Country"
+                     aria-label="Country"
+                     matInput formControlName="country"
+                     [matAutocomplete]="auto">
+
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <mat-option *ngFor="let country of filteredOptions | async" [value]="country">
+                  {{country.Name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
 
     <button class="submit-btn" color="primary" mat-raised-button type="submit" [disabled]="!personDetailForm.valid">Submit
     </button>
 
   </form>
-
-  <p></p>
-
-  <!--<mat-card class="example-container">-->
-  <!--<mat-card-title>Contact Info</mat-card-title>-->
-
-  <!--<mat-card-content class="example-container">-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>E-Mail Address</mat-label>-->
-  <!--<input [(ngModel)]="person.contactData.emailAddress" matInput placeholder="" >-->
-  <!--</mat-form-field>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>Phone Number</mat-label>-->
-  <!--<input [(ngModel)]="person.contactData.phoneNumber" matInput placeholder="" >-->
-  <!--</mat-form-field>-->
-  <!--</mat-card-content>-->
-  <!--</mat-card>-->
-
-  <!--<p></p>-->
-
-  <!--<mat-card class="example-container" >-->
-  <!--<mat-card-title>Street Address</mat-card-title>-->
-
-  <!--<mat-card-content class="example-container">-->
-  <!--<div>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>Street</mat-label>-->
-  <!--<input [(ngModel)]="person.streetAddress.street" matInput placeholder="" required>-->
-  <!--</mat-form-field>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>Number</mat-label>-->
-  <!--<input [(ngModel)]="person.streetAddress.streetNumber" matInput placeholder="">-->
-  <!--</mat-form-field>-->
-  <!--</div>-->
-  <!--<div>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>Zip</mat-label>-->
-  <!--<input [(ngModel)]="person.streetAddress.zip" matInput placeholder="" required>-->
-  <!--</mat-form-field>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>City</mat-label>-->
-  <!--<input [(ngModel)]="person.streetAddress.city" matInput placeholder="" required>-->
-  <!--</mat-form-field>-->
-  <!--<mat-form-field appearance="standard">-->
-  <!--<mat-label>Country</mat-label>-->
-  <!--<input [(ngModel)]="person.streetAddress.isoCountryCode" matInput placeholder="" required>-->
-  <!--</mat-form-field>-->
-  <!--</div>-->
-  <!--</mat-card-content>-->
-  <!--</mat-card>-->
-  <p></p>
-  <!--<button mat-raised-button (click)="goBack()">go back</button>-->
-
 
 </div>

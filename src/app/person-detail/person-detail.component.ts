@@ -15,6 +15,10 @@ import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/
 // the `default as` syntax.
 import * as _moment from 'moment';
 import {isNullOrUndefined} from "util";
+import {CountryService} from "../country.service";
+import {CountryCode} from "../countries";
+import {Observable} from "rxjs";
+import {map, startWith, tap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-contact-detail',
@@ -35,8 +39,12 @@ export class PersonDetailComponent implements OnInit {
   personDetailForm: FormGroup;
   person: Person;
   birthDateControl = new FormControl(null);
-  submitted: boolean = false;
   unmappedErrors: string[] = [];
+  countries: CountryCode[] = [];
+
+  country: FormControl = new FormControl({ 'Name': 'Switzerland', 'Code': "CH"});
+
+  filteredOptions: Observable<CountryCode[]>;
 
   validation_messages = {
     'firstName': [
@@ -72,15 +80,28 @@ export class PersonDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private personService: PersonService,
+    private countryService: CountryService,
     private location: Location,
     private fb: FormBuilder
   ) {
+
     this.personDetailForm = this.fb.group({
       firstName: new FormControl('', [Validators.maxLength(256)]),
       lastName: new FormControl('', [Validators.required, Validators.maxLength(256)]),
       birthDate: new FormControl(),
       sex: new FormControl(this.sexes[0]),
+      phoneNumber: new FormControl(),
+      emailAddress: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
+      address: fb.group({
+        street: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
+        number: new FormControl(''), //[]),
+        zip: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
+        city: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
+        country: this.country,
+      }, {validator: this.addressValidator})
+      // check: https://stackoverflow.com/questions/42789158/creating-optional-nested-formgroups-in-angular-2
     });
+
   }
 
   ngOnInit() {
@@ -88,14 +109,128 @@ export class PersonDetailComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
 
     if (isNil(id)) {
-      console.log('new address: ' + id);
+      console.log('new id: ' + id);
       this.person = new Person();
       this.person.type = 'NATURAL';
       this.person.streetAddress.isoCountryCode = 'CH';
     } else {
       this.loadPerson();
     }
+
+
+    this.countryService.getCountries().subscribe(countries => {
+      this.countries = countries;
+
+      this.filteredOptions = this.country.valueChanges.pipe(
+        startWith<string | CountryCode>(''),
+        tap(value => console.log("tap value: " + value)),
+        map(value => typeof value === 'string' ? value : value.Name),
+        map(name => name ? this._filter(name) : this.countries.slice())
+      );
+    });
   }
+
+  displayFn(countryCode?: CountryCode): string | undefined {
+    console.log('displayFn: ' + countryCode);
+    return countryCode ? countryCode.Name : undefined;
+  }
+
+  private _filter(name: string): CountryCode[] {
+    console.log('filter: ' + name);
+    const filterValue = name.toLowerCase();
+
+    var res = this.countries.filter(option => option.Name.toLowerCase().indexOf(filterValue) === 0);
+    console.log("r: " + JSON.stringify(res));
+
+    return res;
+  }
+
+  // requiredIfAddressNonEmpty(): ValidatorFn {
+  //   return (c: AbstractControl): { [key: string]: any } => {
+  //
+  //     if (!this.personDetailForm) {
+  //       console.log("form is undefined")
+  //       return null;
+  //     }
+  //
+  //     console.log('validate: ');
+  //
+  //     var addressFormGroup = this.personDetailForm.get('address') as FormGroup;
+  //
+  //     var street = addressFormGroup.get('street').value;
+  //     var number = addressFormGroup.get('number').value;
+  //     var zip = addressFormGroup.get('zip').value;
+  //     var city = addressFormGroup.get('city').value;
+  //     var country = addressFormGroup.get('country').value;
+  //
+  //     addressFormGroup.markAsTouched({ onlySelf: false });
+  //     // Object.keys(addressFormGroup.controls).forEach(field => { // {1}
+  //     //   console.log('field: ' + field);
+  //     //   const control = addressFormGroup.get(field);            // {2}
+  //     //   control.markAsTouched({ onlySelf: true });       // {3}
+  //     // });
+  //
+  //     if (street || number || zip || city || country) {
+  //       console.log("validate: " + c.value);
+  //       if (!c.value) {
+  //         return {'required': true};
+  //       }
+  //     } else {
+  //       console.log("no validation required");
+  //     }
+  //
+  //     return null;
+  //   }
+  // }
+
+  addressValidator(control: FormControl): { [key: string]: boolean } {
+
+    var street = control.get('street').value;
+    var number = control.get('number').value;
+    var zip = control.get('zip').value;
+    var city = control.get('city').value;
+    var country = control.get('country').value;
+
+    if (street || number || zip || city) {
+      console.log("validation required: " + street + ", " + zip + ", " + city + ", " + country);
+
+      if (!street) {
+        control.get('street').setErrors({
+          "incorrect": true
+        });
+      }
+      if (!zip) {
+        control.get('zip').setErrors({
+          "incorrect": true
+        });
+      }
+      if (!city) {
+        control.get('city').setErrors({
+          "incorrect": true
+        });
+      }
+      if (!country) {
+        control.get('country').setErrors({
+          "incorrect": true
+        });
+      }
+      //control.get('street').setValidators(() => Validators.required);
+
+      // if(!street || !zip || !city || !country) {
+      //   return { city: true };
+      // }
+    }
+    console.log("address is valid");
+    return null;
+    // if (email.value === confirm.value) {
+    //   return null;
+    // } else {
+    //   return { nomatch: true };
+    // }
+  };
+
+
+
 
   isPerson(): boolean {
     return (this.person.type === 'NATURAL');
@@ -153,8 +288,6 @@ export class PersonDetailComponent implements OnInit {
     });
 
     this.unmappedErrors.push("Ein Fehler... oh nein!")
-
-    return;
 
     if (!this.personDetailForm.valid) {
       // this.restService.create(this.form.value)

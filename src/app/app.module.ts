@@ -27,7 +27,8 @@ import {
   MatSidenavModule,
   MatSortModule,
   MatTableModule,
-  MatToolbarModule
+  MatToolbarModule,
+  MatAutocompleteModule
 } from '@angular/material';
 import {LoginComponent} from './login/login.component';
 import {FlexLayoutModule} from '@angular/flex-layout';
@@ -45,7 +46,7 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
     NavigationComponent,
     LoginComponent,
     MemberSearchComponent,
-    MemberDetailComponent
+    MemberDetailComponent,
   ],
   imports: [
     BrowserModule,
@@ -81,6 +82,7 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
     RouterModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatAutocompleteModule,
     OAuthModule.forRoot({
       resourceServer: {
         allowedUrls: ['https://localhost:8443/api'],

@@ -1,13 +1,13 @@
 export class Person {
   public id: string;
   public type: string;
-  public basicData: BasicData = new BasicData();
-  public contactData: ContactData = new ContactData();
-  public streetAddress: StreetAddress = new StreetAddress();
+  public basicData: BasicData;
+  public contactData: ContactData;
+  public streetAddress: StreetAddress;
 }
 
 export class BasicData {
-  public name: Name = new Name();
+  public name: Name;
   public sex: string;
   public birthDate: string;
 }

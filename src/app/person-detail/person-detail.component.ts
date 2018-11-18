@@ -1,6 +1,6 @@
 ///<reference path="../../../node_modules/moment/moment.d.ts"/>
 import {Component, OnInit} from '@angular/core';
-import {ContactData, Person, StreetAddress} from '../person';
+import {BasicData, ContactData, Name, Person, StreetAddress} from '../person';
 import {ActivatedRoute} from '@angular/router';
 import {Location} from '@angular/common';
 import {PersonService} from '../person.service';
@@ -21,7 +21,7 @@ import {Observable} from "rxjs";
 import {map, startWith, tap} from 'rxjs/operators';
 
 @Component({
-  selector: 'app-contact-detail',
+  selector: 'app-person-detail',
   templateUrl: './person-detail.component.html',
   styleUrls: ['./person-detail.component.css'],
   providers: [
@@ -37,12 +37,11 @@ export class PersonDetailComponent implements OnInit {
   // https://angular-templates.io/tutorials/about/angular-forms-and-validations
 
   personDetailForm: FormGroup;
-  person: Person;
   birthDateControl = new FormControl(null);
   unmappedErrors: string[] = [];
   countries: CountryCode[] = [];
 
-  country: FormControl = new FormControl({ 'Name': 'Switzerland', 'Code': "CH"});
+  country: FormControl = new FormControl({'Name': 'Switzerland', 'Code': "CH"});
 
   filteredOptions: Observable<CountryCode[]>;
 
@@ -86,18 +85,20 @@ export class PersonDetailComponent implements OnInit {
   ) {
 
     this.personDetailForm = this.fb.group({
-      firstName: new FormControl('', [Validators.maxLength(256)]),
-      lastName: new FormControl('', [Validators.required, Validators.maxLength(256)]),
-      birthDate: new FormControl(),
-      sex: new FormControl(this.sexes[0]),
+      id: new FormControl(UUID.UUID()),
+      type: new FormControl(this.types[0]),
+      firstName: new FormControl(null, [Validators.maxLength(256)]),
+      lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(256)]),
+      birthDate: this.birthDateControl,
+      sex: new FormControl(null),
       phoneNumber: new FormControl(),
       emailAddress: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
       address: fb.group({
         street: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
-        number: new FormControl(''), //[]),
+        streetNumber: new FormControl(''), //[]),
         zip: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
         city: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
-        country: this.country,
+        isoCountryCode: this.country,
       }, {validator: this.addressValidator})
       // check: https://stackoverflow.com/questions/42789158/creating-optional-nested-formgroups-in-angular-2
     });
@@ -106,17 +107,9 @@ export class PersonDetailComponent implements OnInit {
 
   ngOnInit() {
 
-    const id = this.route.snapshot.paramMap.get('id');
-
-    if (isNil(id)) {
-      console.log('new id: ' + id);
-      this.person = new Person();
-      this.person.type = 'NATURAL';
-      this.person.streetAddress.isoCountryCode = 'CH';
-    } else {
+    if (!this.isNew()) {
       this.loadPerson();
     }
-
 
     this.countryService.getCountries().subscribe(countries => {
       this.countries = countries;
@@ -186,10 +179,10 @@ export class PersonDetailComponent implements OnInit {
   addressValidator(control: FormControl): { [key: string]: boolean } {
 
     var street = control.get('street').value;
-    var number = control.get('number').value;
+    var number = control.get('streetNumber').value;
     var zip = control.get('zip').value;
     var city = control.get('city').value;
-    var country = control.get('country').value;
+    var country = control.get('isoCountryCode').value;
 
     if (street || number || zip || city) {
       console.log("validation required: " + street + ", " + zip + ", " + city + ", " + country);
@@ -210,7 +203,7 @@ export class PersonDetailComponent implements OnInit {
         });
       }
       if (!country) {
-        control.get('country').setErrors({
+        control.get('isoCountryCode').setErrors({
           "incorrect": true
         });
       }
@@ -229,11 +222,28 @@ export class PersonDetailComponent implements OnInit {
     // }
   };
 
-
-
-
   isPerson(): boolean {
-    return (this.person.type === 'NATURAL');
+    return (this.personDetailForm.get('type').value.value === 'NATURAL');
+  }
+
+  setEmptyToNull(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(name => {
+
+      if (formGroup.controls[name] instanceof FormGroup) {
+
+        this.setEmptyToNull(formGroup.controls[name] as FormGroup);
+
+      } else if (formGroup.controls[name].value || formGroup.controls[name].value === "") {
+
+        if (typeof formGroup.controls[name].value === "string") {
+
+          if (formGroup.controls[name].value === "") {
+            console.log('set value to null: ' + formGroup.controls[name]);
+            formGroup.controls[name].setValue(null);
+          }
+        }
+      }
+    });
   }
 
   loadPerson(): void {
@@ -242,22 +252,25 @@ export class PersonDetailComponent implements OnInit {
 
     this.personService.getPerson(id)
       .subscribe(person => {
-        this.person = person;
-        if (this.person.basicData != null) {
-          this.birthDateControl.setValue(_moment(this.person.basicData.birthDate));
-        }
+        this.personDetailForm.get('id').setValue(person.id);
+        this.personDetailForm.get('type').setValue(this.types.filter(t => t.value === person.type)[0].value);
 
-        // if (isNil(this.person.streetAddress)) {
-        //   this.streetAddress = new StreetAddress();
-        // } else {
-        //   this.streetAddress = this.person.streetAddress;
-        // }
-        //
-        // if (isNil(this.person.contactData)) {
-        //   this.contactData = new ContactData();
-        // } else {
-        //   this.contactData = this.person.contactData;
-        // }
+        this.personDetailForm.get('firstName').setValue(person.basicData.name.firstName);
+        this.personDetailForm.get('lastNameOrCompanyName').setValue(person.basicData.name.lastNameOrCompanyName);
+        if (person.basicData != null) {
+          this.birthDateControl.setValue(_moment(person.basicData.birthDate));
+        }
+        //this.personDetailForm.get('birthDate').setValue(this.person.basicData.birthDate);
+        this.personDetailForm.get('sex').setValue(this.sexes.filter(s => s.value === person.basicData.sex)[0]);
+
+        this.personDetailForm.get('phoneNumber').setValue(person.contactData.phoneNumber);
+        this.personDetailForm.get('emailAddress').setValue(person.contactData.emailAddress);
+
+        this.personDetailForm.get('address').get('street').setValue(person.streetAddress.street);
+        this.personDetailForm.get('address').get('streetNumber').setValue(person.streetAddress.streetNumber);
+        this.personDetailForm.get('address').get('zip').setValue(person.streetAddress.zip);
+        this.personDetailForm.get('address').get('city').setValue(person.streetAddress.city);
+        this.personDetailForm.get('address').get('isoCountryCode').setValue(this.countries.filter(c => c.Code === person.streetAddress.isoCountryCode)[0]);
       });
   }
 
@@ -266,8 +279,10 @@ export class PersonDetailComponent implements OnInit {
   }
 
   isNew() {
-    return isNil(this.person.id);
+    const id = this.route.snapshot.paramMap.get('id');
+    return isNil(id);
   }
+
 
   isEmptyStreetAddress(address: StreetAddress) {
     return (isNil(address.street) && isNil(address.city) && isNil(address.state) && isNil(address.streetNumber) && isNil(address.zip));
@@ -280,61 +295,95 @@ export class PersonDetailComponent implements OnInit {
   save(f: NgForm): void {
 
     console.log("save: " + f);
-
+    this.setEmptyToNull(this.personDetailForm);
     this.unmappedErrors = [];
-
-    this.personDetailForm.get('firstName').setErrors({
-      "incorrect": true
-    });
 
     this.unmappedErrors.push("Ein Fehler... oh nein!")
 
     if (!this.personDetailForm.valid) {
+      return;
       // this.restService.create(this.form.value)
       //   .subscribe(
       //     entry => this.handleSubmitSuccess(entry),
       //     error => this.handleSubmitError(error)
       //   );
     }
-    console.log("submit");
-
-    if (this.isNew()) {
-      this.person.id = UUID.UUID();
-    }
 
     const personToBeSaved = new Person();
 
-    personToBeSaved.id = this.person.id;
-    personToBeSaved.type = this.person.type;
-    personToBeSaved.basicData = this.person.basicData;
+    personToBeSaved.id = this.personDetailForm.get('id').value;
+    personToBeSaved.type = this.personDetailForm.get('type').value.value;
 
-    var offset = new Date().getTimezoneOffset();
-    console.log(offset);
+    // basic data
+    personToBeSaved.basicData = new BasicData();
+    personToBeSaved.basicData.name = new Name();
 
-    if (!isNullOrUndefined(this.birthDateControl.value)) {
-      var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
-      console.log("vvvvvvvvvvvvalue: " + formattedLocalDate);
-      personToBeSaved.basicData.birthDate = formattedLocalDate;
+    personToBeSaved.basicData.name.lastNameOrCompanyName = this.personDetailForm.get('lastNameOrCompanyName').value as string;
+
+    if (personToBeSaved.type === "NATURAL") {
+      personToBeSaved.basicData.name.firstName = this.personDetailForm.get('firstName').value;
+
+      if (this.personDetailForm.get('sex').value) {
+        personToBeSaved.basicData.sex = this.personDetailForm.get('sex').value.value;
+      }
+
+      if (!isNullOrUndefined(this.birthDateControl.value)) {
+        var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
+        personToBeSaved.basicData.birthDate = formattedLocalDate;
+      }
     }
 
-    // do not add empty entitites
-    if (this.isEmptyStreetAddress(this.person.streetAddress)) {
-      personToBeSaved.streetAddress = null;
-    } else {
-      personToBeSaved.streetAddress = this.person.streetAddress;
+    // contact data
+    var contactData = new ContactData();
+    contactData.emailAddress = this.personDetailForm.get('emailAddress').value as string;
+    contactData.phoneNumber = this.personDetailForm.get('phoneNumber').value as string;
+    if (!this.isEmptyContactData(contactData)) {
+      personToBeSaved.contactData = contactData;
     }
 
-    if (this.isEmptyContactData(this.person.contactData)) {
-      personToBeSaved.streetAddress = null;
-    } else {
-      personToBeSaved.contactData = this.person.contactData;
+    // street address
+    var streetAddress = new StreetAddress();
+    streetAddress.street = this.personDetailForm.get('address').get('street').value as string;
+    streetAddress.streetNumber = this.personDetailForm.get('address').get('streetNumber').value as string;
+    streetAddress.zip = this.personDetailForm.get('address').get('zip').value as string;
+    streetAddress.city = this.personDetailForm.get('address').get('city').value as string;
+    streetAddress.isoCountryCode = this.personDetailForm.get('address').get('isoCountryCode').value.Code;
+    if (!this.isEmptyStreetAddress(streetAddress)) {
+      personToBeSaved.streetAddress = streetAddress;
     }
 
-    this.personService.updatePerson(personToBeSaved).subscribe();
-    console.log('saved person: ' + personToBeSaved);
+    console.log("about to save: " + JSON.stringify(personToBeSaved));
+
+    this.personDetailForm.get('type').disable();
+
+    this.personService.updatePerson(personToBeSaved).subscribe(o => console.log('saved person'));
+
+    //personToBeSaved.basicData = this.person.basicData;
+
+    // var offset = new Date().getTimezoneOffset();
+    // console.log(offset);
+    //
+    // if (!isNullOrUndefined(this.birthDateControl.value)) {
+    //   var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
+    //   console.log("vvvvvvvvvvvvalue: " + formattedLocalDate);
+    //   personToBeSaved.basicData.birthDate = formattedLocalDate;
+    // }
+    //
+    // // do not add empty entitites
+    // if (this.isEmptyStreetAddress(this.person.streetAddress)) {
+    //   personToBeSaved.streetAddress = null;
+    // } else {
+    //   personToBeSaved.streetAddress = this.person.streetAddress;
+    // }
+    //
+    // if (this.isEmptyContactData(this.person.contactData)) {
+    //   personToBeSaved.streetAddress = null;
+    // } else {
+    //   personToBeSaved.contactData = this.person.contactData;
+    // }
+    //
+    // this.personService.updatePerson(personToBeSaved).subscribe();
+    // console.log('saved person: ' + personToBeSaved);
   }
 
-  bla(error: any): void {
-
-  }
 }

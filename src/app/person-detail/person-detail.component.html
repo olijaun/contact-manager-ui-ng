@@ -1,12 +1,10 @@
-<div *ngIf="person" class="container">
+<div class="container">
 
   <h2 *ngIf="this.isNew()">New Person</h2>
-  <h2 *ngIf="!this.isNew()">{{ person.basicData.name.lastNameOrCompanyName | uppercase }}, {{ person.basicData.name.firstName |
+  <h2 *ngIf="!this.isNew()">{{ personDetailForm.get('lastNameOrCompanyName').value | uppercase }}, {{
+    personDetailForm.get('firstName').value |
     uppercase
     }}</h2>
-  <p>
-    <mat-label>Id: {{person.id}}</mat-label>
-  </p>
   <form (ngSubmit)="save(personDetailForm.value)" [formGroup]="personDetailForm">
 
     <label class="label">
@@ -23,14 +21,20 @@
 
       <mat-card-content class="example-container">
 
-        <!--<mat-form-field appearance="standard">-->
-        <!--<mat-label>Type</mat-label>-->
-        <!--<mat-select name="contactType" [(ngModel)]="person.type" [disabled]="!this.isNew()">-->
-        <!--<mat-option *ngFor="let contactType of types" [value]="contactType.value">-->
-        <!--{{ contactType.viewValue }}-->
-        <!--</mat-option>-->
-        <!--</mat-select>-->
-        <!--</mat-form-field>-->
+        <mat-form-field appearance="outline" class="component">
+          <mat-label>Id</mat-label>
+          <input name="id" matInput placeholder="Id" formControlName="id" readonly>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Type</mat-label>
+          <mat-select name="contactType" [disabled]="!this.isNew()" formControlName="type">
+            <mat-option *ngFor="let contactType of types" [value]="contactType">
+              {{ contactType.viewValue }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
         <mat-form-field appearance="outline" *ngIf="isPerson()" class="component">
           <mat-label>First name</mat-label>
           <input name="firstName" matInput placeholder="First Name" formControlName="firstName">
@@ -44,10 +48,10 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Last name</mat-label>
-          <input name="lastName" matInput placeholder="Last Name" formControlName="lastName">
+          <input name="lastNameOrCompanyName" matInput placeholder="Last Name" formControlName="lastNameOrCompanyName">
           <mat-error *ngFor="let validation of validation_messages.lastName">
             <mat-error class="error-message"
-                       *ngIf="personDetailForm.get('lastName').hasError(validation.type) && (personDetailForm.get('lastName').dirty || personDetailForm.get('lastName').touched)">
+                       *ngIf="personDetailForm.get('lastNameOrCompanyName').hasError(validation.type) && (personDetailForm.get('lastNameOrCompanyName').dirty || personDetailForm.get('lastNameOrCompanyName').touched)">
               {{validation.message}}
             </mat-error>
           </mat-error>
@@ -84,7 +88,7 @@
 
         <mat-form-field *ngIf="isPerson()">
           <mat-select placeholder="Sex" formControlName="sex">
-            <mat-option *ngFor="let sex of sexes" [value]="sex.value">
+            <mat-option *ngFor="let sex of sexes" [value]="sex">
               {{ sex.viewValue }}
             </mat-option>
           </mat-select>
@@ -130,7 +134,7 @@
             </mat-form-field>
             <mat-form-field appearance="standard">
               <mat-label>Number</mat-label>
-              <input matInput placeholder="" formControlName="number">
+              <input matInput placeholder="" formControlName="streetNumber">
             </mat-form-field>
           </div>
           <div>
@@ -157,7 +161,8 @@
               <input type="text"
                      placeholder="Country"
                      aria-label="Country"
-                     matInput formControlName="country"
+                     matInput
+                     formControlName="isoCountryCode"
                      [matAutocomplete]="auto">
 
               <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">

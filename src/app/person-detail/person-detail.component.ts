@@ -19,6 +19,7 @@ import {CountryService} from "../country.service";
 import {CountryCode} from "../countries";
 import {Observable} from "rxjs";
 import {map, startWith, tap} from 'rxjs/operators';
+import {PhoneValidator} from "./phone.validator";
 
 @Component({
   selector: 'app-person-detail',
@@ -91,8 +92,8 @@ export class PersonDetailComponent implements OnInit {
       lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(256)]),
       birthDate: this.birthDateControl,
       sex: new FormControl(null),
-      phoneNumber: new FormControl(),
-      emailAddress: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
+      phoneNumber: new FormControl(null, PhoneValidator.validCountryPhone(this.country)),
+      emailAddress: new FormControl('', [Validators.email]), //, [this.requiredIfAddressNonEmpty()]),
       address: fb.group({
         street: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
         streetNumber: new FormControl(''), //[]),

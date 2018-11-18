@@ -1,6 +1,9 @@
 <div id="member-search-component" class="component">
 
   <div class="example-container">
+
+    <app-messages></app-messages>
+
     <mat-form-field class="example-full-width" class="component">
       <input matInput placeholder="Lastname or firstname" #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
     </mat-form-field>

@@ -36,3 +36,8 @@ https://console.developers.google.com/apis/credentials/oauthclient
 
 Define roles in auth0:
 https://medium.com/tojs/adding-groups-roles-and-permissions-to-your-auth0-users-for-free-8fc0562b2205
+
+update npm packages
+npm i -g npm-check-updates
+ncu -u
+npm install

@@ -20,6 +20,8 @@ import {CountryCode} from "../countries";
 import {Observable} from "rxjs";
 import {map, startWith, tap} from 'rxjs/operators';
 import {PhoneValidator} from "./phone.validator";
+import {MessageService} from "../message.service";
+import {DefaultValidationErrorHandler} from "../validation.error.handler";
 
 @Component({
   selector: 'app-person-detail',
@@ -81,6 +83,7 @@ export class PersonDetailComponent implements OnInit {
     private route: ActivatedRoute,
     private personService: PersonService,
     private countryService: CountryService,
+    private messageService: MessageService,
     private location: Location,
     private fb: FormBuilder
   ) {
@@ -89,7 +92,7 @@ export class PersonDetailComponent implements OnInit {
       id: new FormControl(UUID.UUID()),
       type: new FormControl(this.types[0]),
       firstName: new FormControl(null, [Validators.maxLength(256)]),
-      lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(256)]),
+      lastNameOrCompanyName: new FormControl(null), //, [Validators.required, Validators.maxLength(256)]),
       birthDate: this.birthDateControl,
       sex: new FormControl(null),
       phoneNumber: new FormControl(null, PhoneValidator.validCountryPhone(this.country)),
@@ -251,7 +254,7 @@ export class PersonDetailComponent implements OnInit {
 
     const id = this.route.snapshot.paramMap.get('id');
 
-    this.personService.getPerson(id)
+    this.personService.getPerson(id, new DefaultValidationErrorHandler(this.messageService))
       .subscribe(person => {
         this.personDetailForm.get('id').setValue(person.id);
         this.personDetailForm.get('type').setValue(this.types.filter(t => t.value === person.type)[0].value);
@@ -357,34 +360,25 @@ export class PersonDetailComponent implements OnInit {
 
     this.personDetailForm.get('type').disable();
 
-    this.personService.updatePerson(personToBeSaved).subscribe(o => console.log('saved person'));
-
-    //personToBeSaved.basicData = this.person.basicData;
-
-    // var offset = new Date().getTimezoneOffset();
-    // console.log(offset);
-    //
-    // if (!isNullOrUndefined(this.birthDateControl.value)) {
-    //   var formattedLocalDate = _moment(this.birthDateControl.value).local(true).format(_moment.HTML5_FMT.DATE);
-    //   console.log("vvvvvvvvvvvvalue: " + formattedLocalDate);
-    //   personToBeSaved.basicData.birthDate = formattedLocalDate;
-    // }
-    //
-    // // do not add empty entitites
-    // if (this.isEmptyStreetAddress(this.person.streetAddress)) {
-    //   personToBeSaved.streetAddress = null;
-    // } else {
-    //   personToBeSaved.streetAddress = this.person.streetAddress;
-    // }
-    //
-    // if (this.isEmptyContactData(this.person.contactData)) {
-    //   personToBeSaved.streetAddress = null;
-    // } else {
-    //   personToBeSaved.contactData = this.person.contactData;
-    // }
-    //
-    // this.personService.updatePerson(personToBeSaved).subscribe();
-    // console.log('saved person: ' + personToBeSaved);
+    const messageService = this.messageService;
+    this.personService.updatePerson(personToBeSaved, {
+      handle(code: string, attribute?: string): void {
+        console.log("message service: " + messageService);
+        messageService.addBusinessError("validation error: " + code);
+      },
+      handleNotFound(attribute?: string): void {
+        messageService.addBusinessError("Not found");
+      }
+    }).subscribe({
+      next: x => console.log('Observer got a next value: ' + x),
+      error: err => this.handleError(err),
+      complete: () => this.location.back(),
+    });
   }
 
+  handleError(error: any) {
+    if(error instanceof BusinessError) {
+
+    }
+  }
 }

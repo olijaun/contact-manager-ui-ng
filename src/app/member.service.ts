@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
-import {Member, SubscriptionType, SubscriptionPeriods, SubscriptionTypes} from "./member";
+import {Member, SubscriptionType, SubscriptionPeriods, SubscriptionTypes, SubscriptionPeriod} from "./member";
 import {isNullOrUndefined} from "util";
 
 const httpOptions = {
@@ -32,7 +32,6 @@ export class MemberService {
 
   getMembers(): Observable<Member[]> {
     // TODO: send the message _after_ fetching the heroes
-    this.messageService.add('HeroService: fetched heroes');
     return this.http.get<Member[]>(this.memberUrl).pipe(
       tap(heroes => this.log(`fetched heroes`)),
       catchError(this.handleError('getHeroes', []))
@@ -55,11 +54,11 @@ export class MemberService {
     );
   }
 
-  getSubscriptionPeriods(): Observable<SubscriptionPeriods> {
+  getSubscriptionPeriods(): Observable<SubscriptionPeriod[]> {
     const url = `${this.subscriptionPeriodsUrl}`;
-    return this.http.get<SubscriptionPeriods>(url, this.getOptions()).pipe(
+    return this.http.get<SubscriptionPeriod[]>(url, this.getOptions()).pipe(
       tap(_ => this.log(`fetched subscription periods`)),
-      catchError(this.handleError<SubscriptionPeriods>(`getSubscriptionPeriods`))
+      catchError(this.handleError<SubscriptionPeriod[]>(`getSubscriptionPeriods`, []))
     );
   }
 
@@ -117,6 +116,17 @@ export class MemberService {
   private handleError<T>(operation = 'operation', result?: T) {
     return (error: any): Observable<T> => {
 
+      if(true) {
+        throw "Validation error";
+      }
+
+      if(error instanceof HttpErrorResponse) {
+        var e = error as HttpErrorResponse;
+        if(e.status >= 400 && e.status < 500) {
+          throw "Validation error";
+        }
+      }
+
       // TODO: send the error to remote logging infrastructure
       console.error(error); // log to console instead
 
@@ -128,8 +138,7 @@ export class MemberService {
     };
   }
 
-  /** Log a HeroService message with the MessageService */
   private log(message: string) {
-    this.messageService.add('HeroService: ' + message);
+    this.messageService.addTechnicalError('HeroService: ' + message);
   }
 }

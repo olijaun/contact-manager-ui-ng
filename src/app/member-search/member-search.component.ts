@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {catchError, debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
 import {Location} from "@angular/common";
 import {Member, Subscription, SubscriptionPeriod, SubscriptionPeriods} from "../member";
 import {MemberService} from "../member.service";
@@ -17,7 +17,7 @@ export class MemberSearchComponent implements OnInit {
 
   members$: Observable<Member[]>;
   private searchTerms = new Subject<MemberSearchCriteria>();
-  subscriptionPeriods: SubscriptionPeriods;
+  subscriptionPeriods: SubscriptionPeriod[];
   selectedPeriod: SubscriptionPeriod;
   searchTerm: string;
   searchCriteria = new MemberSearchCriteria();
@@ -26,7 +26,7 @@ export class MemberSearchComponent implements OnInit {
   displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address', 'subscriptionType'];
 
   constructor(private memberService: MemberService, private location: Location, private router: Router) {
-    this.subscriptionPeriods = new SubscriptionPeriods();
+    this.subscriptionPeriods = [];
     this.selectedPeriod = new SubscriptionPeriod();
     this.selectedPeriod.id = "";
     this.searchTerm = "";
@@ -92,7 +92,7 @@ export class MemberSearchComponent implements OnInit {
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
 
-    var periods = this.subscriptionPeriods.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
+    var periods = this.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
     if(periods.length === 0) {
       return null;
     }

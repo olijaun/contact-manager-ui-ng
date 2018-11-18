@@ -8,11 +8,7 @@
   <form (ngSubmit)="save(personDetailForm.value)" [formGroup]="personDetailForm">
 
     <label class="label">
-      <div *ngFor="let msg of unmappedErrors">
-        <mat-card class="error-card">
-          Errors occured: {{ msg }}
-        </mat-card>
-      </div>
+      <app-messages></app-messages>
     </label>
 
     <mat-card class="example-container">

@@ -26,7 +26,7 @@ export class MemberDetailComponent implements OnInit {
   displayedColumns = ['subscriptionPeriodId', 'subscriptionTypeId'];
   selectedPeriod: SubscriptionPeriod;
   selectedSubscriptionType: SubscriptionType;
-  subscriptionPeriods: SubscriptionPeriods;
+  subscriptionPeriods: SubscriptionPeriod[];
 
   @ViewChild('basicForm') public basicForm: NgForm;
 
@@ -43,7 +43,7 @@ export class MemberDetailComponent implements OnInit {
     this.selectedPeriod = new SubscriptionPeriod();
     this.selectedSubscriptionType = new SubscriptionType();
 
-    this.subscriptionPeriods = new SubscriptionPeriods();
+    this.subscriptionPeriods = [];
   }
 
   ngOnInit() {
@@ -69,7 +69,7 @@ export class MemberDetailComponent implements OnInit {
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
 
-    var periods = this.subscriptionPeriods.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
+    var periods = this.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
     if(periods.length === 0) {
       return null;
     }

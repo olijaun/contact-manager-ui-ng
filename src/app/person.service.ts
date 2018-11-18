@@ -1,10 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable, of} from 'rxjs';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {Observable, of, throwError} from 'rxjs';
+import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Person} from './person';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
+import {ValidationErrorHandler} from "./validation.error.handler";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -20,50 +21,43 @@ export class PersonService {
 
   private personsUrl = '/api/persons';
 
-  addPerson(contact: Person): Observable<Person> {
+  addPerson(contact: Person, validationErrorHandler: ValidationErrorHandler): Observable<Person> {
     return this.http.post<Person>(this.personsUrl, contact, httpOptions).pipe(
-      tap((c: Person) => this.log(`added perso w/ id=${c.id}`)),
-      catchError(this.handleError<Person>('person'))
+      catchError(this.handleError<Person>('person', validationErrorHandler))
     );
   }
 
   getPersons(): Observable<Person[]> {
     // TODO: send the message _after_ fetching the heroes
-    this.messageService.add('HeroService: fetched heroes');
+    this.messageService.addTechnicalError('HeroService: fetched heroes');
     return this.http.get<Person[]>(this.personsUrl).pipe(
-      tap(heroes => this.log(`fetched heroes`)),
-      catchError(this.handleError('getHeroes', []))
+      catchError(this.handleError('getHeroes', null))
     );
   }
 
-  getPerson(id: string): Observable<Person> {
+  getPerson(id: string, validationErrorHandler): Observable<Person> {
     const url = `${this.personsUrl}/${id}`;
     return this.http.get<Person>(url, this.getOptions()).pipe(
-      tap(_ => this.log(`fetched contact id=${id}`)),
-      catchError(this.handleError<Person>(`getContact id=${id}`))
+      catchError(this.handleError<Person>(`getContact id=${id}`, validationErrorHandler))
     );
   }
 
-  updatePerson(person: Person): Observable<any> {
-    console.log(this.personsUrl + '/' + person.id);
-    console.log(JSON.stringify(this.personsUrl));
+  updatePerson(person: Person, validationErrorHandler: ValidationErrorHandler): Observable<any> {
     return this.http.put(this.personsUrl + '/' + person.id, person, this.getOptions()).pipe(
-      tap(_ => this.log(`updated contact id=${person.id}`)),
-      catchError(this.handleError<any>('updatePerson'))
+      catchError(this.handleError<any>('updatePerson', validationErrorHandler))
     );
   }
 
-  deletePerson(person: Person | number): Observable<Person> {
+  deletePerson(person: Person | number, validationErrorHandler: ValidationErrorHandler): Observable<Person> {
     const id = typeof person === 'number' ? person : person.id;
     const url = `${this.personsUrl}/${id}`;
 
     return this.http.delete<Person>(url, httpOptions).pipe(
-      tap(_ => this.log(`deleted contact id=${id}`)),
-      catchError(this.handleError<Person>('deletePerson'))
+      catchError(this.handleError<Person>('deletePerson', validationErrorHandler))
     );
   }
 
-  searchPersons(term: string): Observable<Person[]> {
+  searchPersons(term: string, validationErrorHandler: ValidationErrorHandler): Observable<Person[]> {
     if (!term.trim()) {
       // if not search term, return empty hero array.
       return of([]);
@@ -78,8 +72,7 @@ export class PersonService {
     // );
 
     return this.http.get<Person[]>(`${this.personsUrl}/?nameLine=${term}`, this.getOptions()).pipe(
-      tap(_ => this.log(`found persons matching "${term}"`)),
-      catchError(this.handleError<Person[]>('searchContract', []))
+      catchError(this.handleError<Person[]>('searchPersons', validationErrorHandler))
     );
   }
 
@@ -101,22 +94,24 @@ export class PersonService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', result?: T) {
+  private handleError<T>(operation = 'operation', validationErrorHandler: ValidationErrorHandler, result?: T) {
     return (error: any): Observable<T> => {
 
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
+      if (error instanceof HttpErrorResponse) {
+        const httpError: HttpErrorResponse = error as HttpErrorResponse;
+        if (httpError.status >= 400 && httpError.status <= 500) {
+          if(validationErrorHandler) {
+            console.log("handle with validation handler");
+            validationErrorHandler.handle("" + httpError.message);
+            // return of(result as T);
+            return throwError("my error");
+          }
+        }
+      }
 
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
+      this.messageService.addTechnicalError('HeroService: ' + error.message);
 
-      // Let the app keep running by returning an empty result.
       return of(result as T);
     };
-  }
-
-  /** Log a HeroService message with the MessageService */
-  private log(message: string) {
-    this.messageService.add('HeroService: ' + message);
   }
 }

@@ -1,11 +1,12 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
-import {catchError, tap} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
 import {Member, SubscriptionType, SubscriptionPeriods, SubscriptionTypes, SubscriptionPeriod} from "./member";
 import {isNullOrUndefined} from "util";
+import {DefaultServiceErrorHandler} from "./default-service-error-handler";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -25,7 +26,6 @@ export class MemberService {
 
   addMember(member: Member): Observable<Member> {
     return this.http.post<Member>(this.memberUrl, member, httpOptions).pipe(
-      tap((c: Member) => this.log(`added perso w/ id=${c.id}`)),
       catchError(this.handleError<Member>('member'))
     );
   }
@@ -33,7 +33,6 @@ export class MemberService {
   getMembers(): Observable<Member[]> {
     // TODO: send the message _after_ fetching the heroes
     return this.http.get<Member[]>(this.memberUrl).pipe(
-      tap(heroes => this.log(`fetched heroes`)),
       catchError(this.handleError('getHeroes', []))
     );
   }
@@ -41,7 +40,6 @@ export class MemberService {
   getMember(id: string): Observable<Member> {
     const url = `${this.memberUrl}/${id}`;
     return this.http.get<Member>(url, this.getOptions()).pipe(
-      tap(_ => this.log(`fetched member id=${id}`)),
       catchError(this.handleError<Member>(`getMember id=${id}`))
     );
   }
@@ -49,24 +47,20 @@ export class MemberService {
   getSubscriptionTypes(subscriptionPeriodId : string): Observable<SubscriptionTypes> {
     const url = `${this.subscriptionPeriodsUrl}/` + subscriptionPeriodId + '/types';
     return this.http.get<SubscriptionTypes>(url, this.getOptions()).pipe(
-      tap(_ => this.log(`fetched subscription types for period ` + subscriptionPeriodId)),
       catchError(this.handleError<SubscriptionTypes>(`getSubscriptionTypes`))
     );
   }
 
   getSubscriptionPeriods(): Observable<SubscriptionPeriod[]> {
     const url = `${this.subscriptionPeriodsUrl}`;
-    return this.http.get<SubscriptionPeriod[]>(url, this.getOptions()).pipe(
-      tap(_ => this.log(`fetched subscription periods`)),
+    return this.http.get<SubscriptionPeriods>(url, this.getOptions()).pipe(
+      map(s => s.subscriptionPeriods),
       catchError(this.handleError<SubscriptionPeriod[]>(`getSubscriptionPeriods`, []))
     );
   }
 
   updateMember(member: Member): Observable<Member> {
-    console.log(this.memberUrl + '/' + member.id);
-    console.log(JSON.stringify(member));
     return this.http.put(this.memberUrl + '/' + member.id, member, this.getOptions()).pipe(
-      tap(_ => this.log(`updated member id=${member.id}`)),
       catchError(this.handleError<any>('updateMember'))
     );
   }
@@ -76,7 +70,6 @@ export class MemberService {
     const url = `${this.memberUrl}/${id}`;
 
     return this.http.delete<Member>(url, httpOptions).pipe(
-      tap(_ => this.log(`deleted member id=${id}`)),
       catchError(this.handleError<Member>('deleteMember'))
     );
   }
@@ -90,7 +83,6 @@ export class MemberService {
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
 
     return this.http.get<Member[]>(`${this.memberUrl}/?searchString=${term}&subscriptionPeriodId=${subscriptionPeriodId}`, this.getOptions()).pipe(
-      tap(_ => this.log(`found members matching "${term} and ${subscriptionPeriodId}"`)),
       catchError(this.handleError<Member[]>('searchMembers', []))
     );
   }
@@ -107,38 +99,7 @@ export class MemberService {
     // });
   }
 
-  /**
-   * Handle Http operation that failed.
-   * Let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
-   */
   private handleError<T>(operation = 'operation', result?: T) {
-    return (error: any): Observable<T> => {
-
-      if(true) {
-        throw "Validation error";
-      }
-
-      if(error instanceof HttpErrorResponse) {
-        var e = error as HttpErrorResponse;
-        if(e.status >= 400 && e.status < 500) {
-          throw "Validation error";
-        }
-      }
-
-      // TODO: send the error to remote logging infrastructure
-      console.error(error); // log to console instead
-
-      // TODO: better job of transforming error for user consumption
-      this.log(`${operation} failed: ${error.message}`);
-
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
-  }
-
-  private log(message: string) {
-    this.messageService.addTechnicalError('HeroService: ' + message);
+    return DefaultServiceErrorHandler.handleError(this.messageService, operation, result);
   }
 }

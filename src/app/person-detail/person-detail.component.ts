@@ -21,7 +21,6 @@ import {Observable} from "rxjs";
 import {map, startWith, tap} from 'rxjs/operators';
 import {PhoneValidator} from "./phone.validator";
 import {MessageService} from "../message.service";
-import {DefaultValidationErrorHandler} from "../validation.error.handler";
 
 @Component({
   selector: 'app-person-detail',
@@ -38,10 +37,8 @@ import {DefaultValidationErrorHandler} from "../validation.error.handler";
 export class PersonDetailComponent implements OnInit {
 
   // https://angular-templates.io/tutorials/about/angular-forms-and-validations
-
   personDetailForm: FormGroup;
   birthDateControl = new FormControl(null);
-  unmappedErrors: string[] = [];
   countries: CountryCode[] = [];
 
   country: FormControl = new FormControl({'Name': 'Switzerland', 'Code': "CH"});
@@ -254,10 +251,10 @@ export class PersonDetailComponent implements OnInit {
 
     const id = this.route.snapshot.paramMap.get('id');
 
-    this.personService.getPerson(id, new DefaultValidationErrorHandler(this.messageService))
+    this.personService.getPerson(id)
       .subscribe(person => {
         this.personDetailForm.get('id').setValue(person.id);
-        this.personDetailForm.get('type').setValue(this.types.filter(t => t.value === person.type)[0].value);
+        this.personDetailForm.get('type').setValue(this.types.filter(t => t.value === person.type)[0]);
 
         this.personDetailForm.get('firstName').setValue(person.basicData.name.firstName);
         this.personDetailForm.get('lastNameOrCompanyName').setValue(person.basicData.name.lastNameOrCompanyName);
@@ -300,9 +297,8 @@ export class PersonDetailComponent implements OnInit {
 
     console.log("save: " + f);
     this.setEmptyToNull(this.personDetailForm);
-    this.unmappedErrors = [];
 
-    this.unmappedErrors.push("Ein Fehler... oh nein!")
+    this.messageService.clear();
 
     if (!this.personDetailForm.valid) {
       return;
@@ -360,25 +356,9 @@ export class PersonDetailComponent implements OnInit {
 
     this.personDetailForm.get('type').disable();
 
-    const messageService = this.messageService;
-    this.personService.updatePerson(personToBeSaved, {
-      handle(code: string, attribute?: string): void {
-        console.log("message service: " + messageService);
-        messageService.addBusinessError("validation error: " + code);
-      },
-      handleNotFound(attribute?: string): void {
-        messageService.addBusinessError("Not found");
-      }
-    }).subscribe({
-      next: x => console.log('Observer got a next value: ' + x),
-      error: err => this.handleError(err),
-      complete: () => this.location.back(),
+    this.personService.updatePerson(personToBeSaved).subscribe({
+      complete: () => window.scroll(0,0),
+      error: _ => window.scroll(0,0),
     });
-  }
-
-  handleError(error: any) {
-    if(error instanceof BusinessError) {
-
-    }
   }
 }

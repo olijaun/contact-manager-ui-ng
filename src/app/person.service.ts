@@ -5,7 +5,7 @@ import {catchError, tap} from 'rxjs/operators';
 import {Person} from './person';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
-import {ValidationErrorHandler} from "./validation.error.handler";
+import {DefaultServiceErrorHandler} from "./default-service-error-handler";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -21,43 +21,43 @@ export class PersonService {
 
   private personsUrl = '/api/persons';
 
-  addPerson(contact: Person, validationErrorHandler: ValidationErrorHandler): Observable<Person> {
+  addPerson(contact: Person): Observable<Person> {
     return this.http.post<Person>(this.personsUrl, contact, httpOptions).pipe(
-      catchError(this.handleError<Person>('person', validationErrorHandler))
+      catchError(this.handleError<Person>('person'))
     );
   }
 
   getPersons(): Observable<Person[]> {
     // TODO: send the message _after_ fetching the heroes
-    this.messageService.addTechnicalError('HeroService: fetched heroes');
     return this.http.get<Person[]>(this.personsUrl).pipe(
       catchError(this.handleError('getHeroes', null))
     );
   }
 
-  getPerson(id: string, validationErrorHandler): Observable<Person> {
+  getPerson(id: string): Observable<Person> {
     const url = `${this.personsUrl}/${id}`;
     return this.http.get<Person>(url, this.getOptions()).pipe(
-      catchError(this.handleError<Person>(`getContact id=${id}`, validationErrorHandler))
+      catchError(this.handleError<Person>(`getContact id=${id}`))
     );
   }
 
-  updatePerson(person: Person, validationErrorHandler: ValidationErrorHandler): Observable<any> {
-    return this.http.put(this.personsUrl + '/' + person.id, person, this.getOptions()).pipe(
-      catchError(this.handleError<any>('updatePerson', validationErrorHandler))
+  updatePerson(person: Person): Observable<any> {
+    return this.http.put(this.personsUrl + '/' + person.id, person, {...this.getOptions(), responseType: 'text'}).pipe(
+      catchError(this.handleError<any>('updatePerson')),
+      tap(p => this.messageService.addInfo("successfully saved person: " + person.id))
     );
   }
 
-  deletePerson(person: Person | number, validationErrorHandler: ValidationErrorHandler): Observable<Person> {
+  deletePerson(person: Person | number): Observable<Person> {
     const id = typeof person === 'number' ? person : person.id;
     const url = `${this.personsUrl}/${id}`;
 
     return this.http.delete<Person>(url, httpOptions).pipe(
-      catchError(this.handleError<Person>('deletePerson', validationErrorHandler))
+      catchError(this.handleError<Person>('deletePerson'))
     );
   }
 
-  searchPersons(term: string, validationErrorHandler: ValidationErrorHandler): Observable<Person[]> {
+  searchPersons(term: string): Observable<Person[]> {
     if (!term.trim()) {
       // if not search term, return empty hero array.
       return of([]);
@@ -72,7 +72,7 @@ export class PersonService {
     // );
 
     return this.http.get<Person[]>(`${this.personsUrl}/?nameLine=${term}`, this.getOptions()).pipe(
-      catchError(this.handleError<Person[]>('searchPersons', validationErrorHandler))
+      catchError(this.handleError<Person[]>('searchPersons'))
     );
   }
 
@@ -94,24 +94,7 @@ export class PersonService {
    * @param operation - name of the operation that failed
    * @param result - optional value to return as the observable result
    */
-  private handleError<T>(operation = 'operation', validationErrorHandler: ValidationErrorHandler, result?: T) {
-    return (error: any): Observable<T> => {
-
-      if (error instanceof HttpErrorResponse) {
-        const httpError: HttpErrorResponse = error as HttpErrorResponse;
-        if (httpError.status >= 400 && httpError.status <= 500) {
-          if(validationErrorHandler) {
-            console.log("handle with validation handler");
-            validationErrorHandler.handle("" + httpError.message);
-            // return of(result as T);
-            return throwError("my error");
-          }
-        }
-      }
-
-      this.messageService.addTechnicalError('HeroService: ' + error.message);
-
-      return of(result as T);
-    };
+  private handleError<T>(operation = 'operation', result?: T) {
+    return DefaultServiceErrorHandler.handleError(this.messageService, operation, result);
   }
 }

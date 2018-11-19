@@ -1,9 +1,18 @@
-<div *ngIf="messageService.messages.length">
-
-  <div *ngFor='let message of messageService.messages'>
-    <mat-card class="error-card">
-      Errors occured: {{ message }}
+<!--<div *ngIf="this.containsMessages()">-->
+<div>
+  <div *ngFor='let message of messageService.technicalErrors'>
+    <mat-card class="technical-error-card">
+      {{ message }}
     </mat-card>
   </div>
-
+  <div *ngFor='let message of messageService.businessErrors'>
+    <mat-card class="business-error-card">
+      {{ message }}
+    </mat-card>
+  </div>
+  <div *ngFor='let message of messageService.info'>
+    <mat-card class="info-message-card">
+      {{ message }}
+    </mat-card>
+  </div>
 </div>

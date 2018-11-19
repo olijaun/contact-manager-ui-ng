@@ -1,3 +1,9 @@
-.error-card {
+.technical-error-card {
   background-color: #f44336;
+}
+.business-error-card {
+  background-color: lightgray;
+}
+.info-message-card {
+  background-color: lightgreen;
 }

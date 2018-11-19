@@ -5,22 +5,35 @@ import {Injectable} from '@angular/core';
 })
 export class MessageService {
 
-  messages: string[] = [];
+  technicalErrors: string[] = [];
+  businessErrors: string[] = [];
+  info: string[] = [];
 
   addTechnicalError(message: string) {
-    if (this.messages.filter(m => m === message).length === 0) {
-      this.messages.push(message);
+    if (this.technicalErrors.filter(m => m === message).length === 0) {
+      this.technicalErrors.push(message);
     }
   }
 
   addBusinessError(message: string) {
-    console.log("addBusiness error");
-    if (this.messages.filter(m => m === message).length === 0) {
-      this.messages.push(message);
+    if (this.businessErrors.filter(m => m === message).length === 0) {
+      this.businessErrors.push(message);
     }
   }
 
+  addInfo(message: string) {
+    if (this.info.filter(m => m === message).length === 0) {
+      this.info.push(message);
+    }
+  }
+
+  containsMessages() : boolean {
+    return this.technicalErrors.length > 0 || this.businessErrors.length > 0 || this.info.length > 0;
+  }
+
   clear() {
-    this.messages = [];
+    this.technicalErrors = [];
+    this.businessErrors = [];
+    this.info = [];
   }
 }

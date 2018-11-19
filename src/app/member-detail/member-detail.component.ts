@@ -2,17 +2,11 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NgForm} from "@angular/forms";
-import {
-  Member,
-  Subscription,
-  SubscriptionPeriod,
-  SubscriptionPeriods,
-  SubscriptionType,
-  SubscriptionTypes
-} from "../member";
+import {Member, Subscription, SubscriptionPeriod, SubscriptionType} from "../member";
 import {MemberService} from "../member.service";
 import {UUID} from "angular2-uuid";
-import {isNull, isNullOrUndefined} from "util";
+import {isNullOrUndefined} from "util";
+import {map, tap} from "rxjs/operators";
 
 @Component({
   selector: 'app-member-detail',
@@ -64,44 +58,44 @@ export class MemberDetailComponent implements OnInit {
       });
   }
 
-  subscriptionPeriodById(subscriptionPeriodId : string): SubscriptionPeriod {
+  subscriptionPeriodById(subscriptionPeriodId: string): SubscriptionPeriod {
 
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
 
     var periods = this.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
-    if(periods.length === 0) {
+    if (periods.length === 0) {
       return null;
     }
     return periods[0];
   }
 
-  subscriptionPeriodNameById(subscriptionPeriodId : string): string {
+  subscriptionPeriodNameById(subscriptionPeriodId: string): string {
 
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
     //console.log("subscriptionPeriodNameById: " + subscriptionPeriodId);
     var period = this.subscriptionPeriodById(subscriptionPeriodId);
-    if(isNullOrUndefined(period)) {
+    if (isNullOrUndefined(period)) {
       return "?";
     }
     return period.name;
   }
 
-  subscriptionTypeNameById(subscription : Subscription): string {
+  subscriptionTypeNameById(subscription: Subscription): string {
 
-    if(isNullOrUndefined(subscription)) {
+    if (isNullOrUndefined(subscription)) {
       return "?";
     }
 
     var period = this.subscriptionPeriodById(subscription.subscriptionPeriodId);
-    if(isNullOrUndefined(period)) {
+    if (isNullOrUndefined(period)) {
       return "?";
     }
 
     var subscriptionTypes = period.subscriptionTypes.filter(t => t.id === subscription.subscriptionTypeId);
 
-    if(subscriptionTypes.length === 0) {
+    if (subscriptionTypes.length === 0) {
       return "?";
     }
     return subscriptionTypes[0].name;
@@ -110,7 +104,7 @@ export class MemberDetailComponent implements OnInit {
   subscriptionTypes(): SubscriptionType[] {
 
     var period = this.subscriptionPeriodById(this.selectedPeriod.id);
-    if(isNullOrUndefined(period)) {
+    if (isNullOrUndefined(period)) {
       return [];
     }
 
@@ -120,6 +114,9 @@ export class MemberDetailComponent implements OnInit {
   loadSubscriptionPeriods(): void {
 
     this.memberService.getSubscriptionPeriods()
+      .pipe(
+        tap(s => console.log("received object: " + JSON.stringify(s))),
+        )
       .subscribe(subscriptionPeriods => {
         this.subscriptionPeriods = subscriptionPeriods;
         //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)

@@ -7,6 +7,7 @@ import {MemberService} from "../member.service";
 import {UUID} from "angular2-uuid";
 import {isNullOrUndefined} from "util";
 import {map, tap} from "rxjs/operators";
+import {MessageService} from "../message.service";
 
 @Component({
   selector: 'app-member-detail',
@@ -27,6 +28,7 @@ export class MemberDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private memberService: MemberService,
+    private messageService: MessageService,
     private location: Location,
     private router: Router
   ) {
@@ -43,7 +45,7 @@ export class MemberDetailComponent implements OnInit {
   ngOnInit() {
 
     const id = this.route.snapshot.paramMap.get('id');
-
+    this.messageService.clear();
     this.loadMember();
     this.loadSubscriptionPeriods();
   }

@@ -1,12 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
-import {catchError, debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
 import {Location} from "@angular/common";
-import {Member, Subscription, SubscriptionPeriod, SubscriptionPeriods} from "../member";
+import {Member, SubscriptionPeriod} from "../member";
 import {MemberService} from "../member.service";
 import {MemberSearchCriteria} from "./MemberSearchCriteria";
 import {isNullOrUndefined} from "util";
+import {MessageService} from "../message.service";
 
 @Component({
   selector: 'app-member-search',
@@ -25,7 +26,7 @@ export class MemberSearchComponent implements OnInit {
   //displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
   displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address', 'subscriptionType'];
 
-  constructor(private memberService: MemberService, private location: Location, private router: Router) {
+  constructor(private memberService: MemberService, private messageService: MessageService, private location: Location, private router: Router) {
     this.subscriptionPeriods = [];
     this.selectedPeriod = new SubscriptionPeriod();
     this.selectedPeriod.id = "";
@@ -48,6 +49,9 @@ export class MemberSearchComponent implements OnInit {
   }
 
   ngOnInit(): void {
+
+    this.messageService.clear();
+
     this.members$ = this.searchTerms.pipe(
       // wait 300ms after each keystroke before considering the term
       debounceTime(300),
@@ -87,32 +91,32 @@ export class MemberSearchComponent implements OnInit {
       });
   }
 
-  subscriptionPeriodById(subscriptionPeriodId : string): SubscriptionPeriod {
+  subscriptionPeriodById(subscriptionPeriodId: string): SubscriptionPeriod {
 
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
 
     var periods = this.subscriptionPeriods.filter(sp => sp.id === subscriptionPeriodId);
-    if(periods.length === 0) {
+    if (periods.length === 0) {
       return null;
     }
     return periods[0];
   }
 
-  subscriptionNameByMember(member : Member): string {
+  subscriptionNameByMember(member: Member): string {
 
-    if(isNullOrUndefined(member)) {
+    if (isNullOrUndefined(member)) {
       return "?";
     }
 
     var period = this.selectedPeriod;
-    if(isNullOrUndefined(period)) {
+    if (isNullOrUndefined(period)) {
       return "?";
     }
 
     var subscriptions = member.subscriptions.filter(s => s.subscriptionPeriodId === this.selectedPeriod.id);
 
-    if(subscriptions.length == 0) {
+    if (subscriptions.length == 0) {
       return "?";
     }
     // TODO: a user might have multiple subscriptions for the same period in theory
@@ -120,7 +124,7 @@ export class MemberSearchComponent implements OnInit {
 
     var subscriptionTypes = period.subscriptionTypes.filter(t => t.id === subscription.subscriptionTypeId);
 
-    if(subscriptionTypes.length === 0) {
+    if (subscriptionTypes.length === 0) {
       return "?";
     }
     return subscriptionTypes[0].name;

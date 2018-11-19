@@ -112,6 +112,8 @@ export class PersonDetailComponent implements OnInit {
       this.loadPerson();
     }
 
+    this.messageService.clear();
+
     this.countryService.getCountries().subscribe(countries => {
       this.countries = countries;
 

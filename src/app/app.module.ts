@@ -20,6 +20,7 @@ import {
   MatIconModule,
   MatInputModule,
   MatListModule,
+  MatTabsModule,
   MatMenuModule, MatNativeDateModule,
   MatOptionModule,
   MatPaginatorModule,
@@ -37,6 +38,8 @@ import { BASE_URL } from './app.tokens';
 import {OAuthModule, OAuthStorage} from 'angular-oauth2-oidc';
 import { MemberSearchComponent } from './member-search/member-search.component';
 import { MemberDetailComponent } from './member-detail/member-detail.component';
+import { WelcomeComponent } from './welcome/welcome.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +50,8 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
     LoginComponent,
     MemberSearchComponent,
     MemberDetailComponent,
+    WelcomeComponent,
+    DashboardComponent,
   ],
   imports: [
     BrowserModule,
@@ -68,6 +73,7 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
     MatSidenavModule,
     MatIconModule,
     MatListModule,
+    MatTabsModule,
     MatGridListModule,
     MatCardModule,
     MatMenuModule,
@@ -89,6 +95,13 @@ import { MemberDetailComponent } from './member-detail/member-detail.component';
         sendAccessToken: true
       }
     })
+  ],
+  exports: [
+    MatSidenavModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatListModule,
+    MatTabsModule,
   ],
   providers: [
     // {provide: AuthConfig, useValue: authConfig },

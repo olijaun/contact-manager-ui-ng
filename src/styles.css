@@ -5,13 +5,7 @@
 body { margin: 0; }
 
 .container {
-  font-weight: 400;
-
-  /* spacing for the component viewer*/
-  padding: 20px 50px 50px 20px;
-
-  /*@media ($mat-xsmall) {*/
-  /*padding-left: $content-padding-side-xs;*/
-  /*padding-right: $content-padding-side-xs;*/
-  /*}*/
+  margin: 20pt;
+  /*font-weight: 400;*/
+  /*padding: 20px 50px 50px 20px;*/
 }

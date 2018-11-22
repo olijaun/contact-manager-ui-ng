@@ -1,12 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {Location} from "@angular/common";
 import {ActivatedRoute, Router} from "@angular/router";
-import {NgForm} from "@angular/forms";
+import {FormBuilder, FormControl, FormGroup, NgForm, Validators} from "@angular/forms";
 import {Member, Subscription, SubscriptionPeriod, SubscriptionType} from "../member";
 import {MemberService} from "../member.service";
 import {UUID} from "angular2-uuid";
 import {isNullOrUndefined} from "util";
-import {map, tap} from "rxjs/operators";
+import {tap} from "rxjs/operators";
 import {MessageService} from "../message.service";
 
 @Component({
@@ -19,9 +19,14 @@ export class MemberDetailComponent implements OnInit {
   member: Member;
   // displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
   displayedColumns = ['subscriptionPeriodId', 'subscriptionTypeId'];
-  selectedPeriod: SubscriptionPeriod;
-  selectedSubscriptionType: SubscriptionType;
   subscriptionPeriods: SubscriptionPeriod[];
+  membershipForm: FormGroup;
+  subscriptionPeriod: FormControl = new FormControl(null, [Validators.required]);
+  subscriptionType: FormControl = new FormControl(null, [Validators.required]);
+  unsavedSubscriptions: Subscription[] = [];
+  currentSubscriptionTypes: SubscriptionType[] = [];
+
+  isAddButtonActivated: boolean = false;
 
   @ViewChild('basicForm') public basicForm: NgForm;
 
@@ -30,16 +35,28 @@ export class MemberDetailComponent implements OnInit {
     private memberService: MemberService,
     private messageService: MessageService,
     private location: Location,
-    private router: Router
+    private router: Router,
+    private fb: FormBuilder
   ) {
 
     this.member = new Member();
     this.member.subscriptions = [];
 
-    this.selectedPeriod = new SubscriptionPeriod();
-    this.selectedSubscriptionType = new SubscriptionType();
-
     this.subscriptionPeriods = [];
+    this.membershipForm = this.fb.group({
+      subscriptionPeriod: this.subscriptionPeriod,
+      subscriptionType: this.subscriptionType
+    });
+
+    this.membershipForm.get('subscriptionPeriod').valueChanges.subscribe(val => {
+      this.currentSubscriptionTypes = (val as SubscriptionPeriod).subscriptionTypes;
+      this.isAddButtonActivated = this.notAddedYet();
+    });
+
+    this.membershipForm.get('subscriptionType').valueChanges.subscribe(val => {
+      this.isAddButtonActivated = this.notAddedYet();
+      console.log("add button activated: " + this.isAddButtonActivated);
+    });
   }
 
   ngOnInit() {
@@ -48,6 +65,7 @@ export class MemberDetailComponent implements OnInit {
     this.messageService.clear();
     this.loadMember();
     this.loadSubscriptionPeriods();
+
   }
 
   loadMember(): void {
@@ -72,7 +90,8 @@ export class MemberDetailComponent implements OnInit {
     return periods[0];
   }
 
-  subscriptionPeriodNameById(subscriptionPeriodId: string): string {
+  subscriptionPeriodNameById(subscriptionPeriodId: string):
+    string {
 
     // not a function: why?
     //var period = this.subscriptionPeriods.bla(subscriptionPeriodId);
@@ -84,7 +103,8 @@ export class MemberDetailComponent implements OnInit {
     return period.name;
   }
 
-  subscriptionTypeNameById(subscription: Subscription): string {
+  subscriptionTypeNameById(subscription: Subscription):
+    string {
 
     if (isNullOrUndefined(subscription)) {
       return "?";
@@ -105,11 +125,16 @@ export class MemberDetailComponent implements OnInit {
 
   subscriptionTypes(): SubscriptionType[] {
 
-    var period = this.subscriptionPeriodById(this.selectedPeriod.id);
-    if (isNullOrUndefined(period)) {
+    if (!this.membershipForm.get('subscriptionType').value) {
       return [];
     }
 
+    var period = this.subscriptionPeriodById(this.membershipForm.get('subscriptionType').value.id);
+    console.log('subscriptionTypes: ' + period);
+    if (isNullOrUndefined(period)) {
+      return [];
+    }
+    console.log('subscriptionTypes: ' + period.id);
     return period.subscriptionTypes;
   }
 
@@ -118,10 +143,9 @@ export class MemberDetailComponent implements OnInit {
     this.memberService.getSubscriptionPeriods()
       .pipe(
         tap(s => console.log("received object: " + JSON.stringify(s))),
-        )
+      )
       .subscribe(subscriptionPeriods => {
         this.subscriptionPeriods = subscriptionPeriods;
-        //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
       });
   }
 
@@ -130,29 +154,50 @@ export class MemberDetailComponent implements OnInit {
     var newSubscription = new Subscription();
     newSubscription.id = UUID.UUID();
     newSubscription.memberId = this.member.id;
-    newSubscription.subscriptionPeriodId = this.selectedPeriod.id;
-    newSubscription.subscriptionTypeId = this.selectedSubscriptionType.id;
+    newSubscription.subscriptionPeriodId = this.membershipForm.get('subscriptionPeriod').value.id;
+    newSubscription.subscriptionTypeId = this.membershipForm.get('subscriptionType').value.id;
 
-    console.log("newSubscription: " + JSON.stringify(newSubscription));
-
-    this.member.subscriptions = [...this.member.subscriptions, newSubscription];
+    this.unsavedSubscriptions = [...this.unsavedSubscriptions, newSubscription];
 
 
-    console.log("subscriptions: " + this.member.subscriptions);
+    this.isAddButtonActivated = this.notAddedYet();
   }
 
+  notAddedYet(): boolean {
+
+    const selectedSubscriptionType: SubscriptionType = this.membershipForm.get('subscriptionType').value;
+    console.log("selectedSubscriptionType" + JSON.stringify(selectedSubscriptionType));
+    if (!selectedSubscriptionType) {
+      return false;
+    }
+
+    const sameTypes = this.member.subscriptions //
+      .filter(t => t.subscriptionPeriodId === selectedSubscriptionType.subscriptionPeriodId //
+        && t.subscriptionTypeId === selectedSubscriptionType.id);
+
+    console.log(":::: " + JSON.stringify(sameTypes));
+    console.log(":::: not added yet: " + (sameTypes.length === 0));
+    return sameTypes.length === 0;
+  }
 
   goBack(): void {
     this.location.back();
   }
 
-  save(): void {
+  save(f: NgForm):
+    void {
+
+    if (!
+      this.membershipForm.valid
+    ) {
+      return;
+    }
+
+    const updatedMember = new Member();
+
+    updatedMember.subscriptions = this.member.subscriptions
     this.memberService.updateMember(this.member).subscribe();
     console.log('saved member: ' + this.member);
-  }
-
-  bla(error: any): void {
-
   }
 
   editPersonClicked() {

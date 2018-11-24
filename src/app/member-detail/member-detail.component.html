@@ -75,8 +75,7 @@
                   color="primary"
                   mat-raised-button
                   type="submit"
-                  (click)="save()"
-                  [disabled]="member.subscriptions.length > 0">Save
+                  [disabled]="unsavedSubscriptions.length === 0">Save
             Memberships
           </button>
         </div>

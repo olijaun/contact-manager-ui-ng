@@ -158,7 +158,7 @@ export class MemberDetailComponent implements OnInit {
     newSubscription.subscriptionTypeId = this.membershipForm.get('subscriptionType').value.id;
 
     this.unsavedSubscriptions = [...this.unsavedSubscriptions, newSubscription];
-
+    this.member.subscriptions = [...this.member.subscriptions, newSubscription];
 
     this.isAddButtonActivated = this.notAddedYet();
   }
@@ -184,20 +184,21 @@ export class MemberDetailComponent implements OnInit {
     this.location.back();
   }
 
-  save(f: NgForm):
-    void {
+  save(f: NgForm): void {
 
-    if (!
-      this.membershipForm.valid
-    ) {
+    if (!this.membershipForm.valid) {
       return;
     }
 
     const updatedMember = new Member();
+    updatedMember.id = this.member.id;
+    updatedMember.subscriptions = [...this.member.subscriptions];
 
-    updatedMember.subscriptions = this.member.subscriptions
-    this.memberService.updateMember(this.member).subscribe();
-    console.log('saved member: ' + this.member);
+    this.memberService.updateMember(updatedMember).subscribe(m => {
+        console.log('saved member: ' + updatedMember);
+        this.unsavedSubscriptions = [];
+      }
+    );
   }
 
   editPersonClicked() {

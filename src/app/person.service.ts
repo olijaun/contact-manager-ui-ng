@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {Observable, of, throwError} from 'rxjs';
-import {HttpClient, HttpErrorResponse, HttpHeaders} from '@angular/common/http';
+import {Observable, of} from 'rxjs';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, tap} from 'rxjs/operators';
 import {Person} from './person';
 import {MessageService} from './message.service';
@@ -19,6 +19,7 @@ export class PersonService {
 
   }
 
+  private personIdRequestsUrl = '/api/person-id-requests';
   private personsUrl = '/api/persons';
 
   addPerson(contact: Person): Observable<Person> {
@@ -41,8 +42,17 @@ export class PersonService {
     );
   }
 
-  updatePerson(person: Person): Observable<any> {
-    return this.http.put(this.personsUrl + '/' + person.id, person, {...this.getOptions(), responseType: 'text'}).pipe(
+  registerPersonId(id: string): Observable<string> {
+    const url = `${this.personIdRequestsUrl}/${id}`;
+    return this.http.put(url, "", this.getTextOptions()).pipe(
+      catchError(this.handleError<string>(`person-id-request/${id}`)),
+      tap(r => console.log("resulllllllt: " + r))
+    );
+  }
+
+  updatePerson(person: Person, personIdRequestId: string): Observable<any> {
+    console.log("updatePerson");
+    return this.http.put(this.personsUrl + '/' + person.id, person, {...this.getOptionsWithRequestId(personIdRequestId), responseType: 'text'}).pipe(
       catchError(this.handleError<any>('updatePerson')),
       tap(p => this.messageService.addInfo("successfully saved person: " + person.id))
     );
@@ -82,6 +92,34 @@ export class PersonService {
         'Content-Type': 'application/json',
         "Authorization": "Bearer " + this.oauthService.getAccessToken()
       })
+    };
+    // return new HttpHeaders({
+    //   "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    // });
+  }
+
+  getOptionsWithRequestId(personIdRequestId: string) {
+    return {
+      headers: new HttpHeaders({
+        'person-id-request-id': "" + personIdRequestId,
+        'Content-Type': 'application/json',
+        "Authorization": "Bearer " + this.oauthService.getAccessToken()
+      })
+    };
+    // return new HttpHeaders({
+    //   "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    // });
+  }
+
+  getTextOptions() {
+    return {
+
+      headers: new HttpHeaders({
+        'Content-Type': 'text/plain',
+        'Accept': "text/plain",
+        "Authorization": "Bearer " + this.oauthService.getAccessToken()
+      }),
+      responseType: "text" as "text"
     };
     // return new HttpHeaders({
     //   "Authorization": "Bearer " + this.oauthService.getAccessToken()

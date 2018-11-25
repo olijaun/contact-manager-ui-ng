@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, map} from 'rxjs/operators';
+import {catchError, map, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
 import {Member, SubscriptionPeriod, SubscriptionPeriods, SubscriptionTypes} from "./member";
@@ -61,7 +61,8 @@ export class MemberService {
 
   updateMember(member: Member): Observable<Member> {
     return this.http.put(this.memberUrl + '/' + member.id, member, this.getOptions()).pipe(
-      catchError(this.handleError<any>('updateMember'))
+      catchError(this.handleError<any>('updateMember')),
+      tap(p => this.messageService.addInfo("successfully saved memberships for member: " + member.id))
     );
   }
 

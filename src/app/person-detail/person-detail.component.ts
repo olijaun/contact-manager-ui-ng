@@ -86,7 +86,7 @@ export class PersonDetailComponent implements OnInit {
   ) {
 
     this.personDetailForm = this.fb.group({
-      id: new FormControl(UUID.UUID()),
+      id: new FormControl(null),
       type: new FormControl(this.types[0]),
       firstName: new FormControl(null, [Validators.maxLength(60)]),
       lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(60)]),
@@ -266,14 +266,18 @@ export class PersonDetailComponent implements OnInit {
         //this.personDetailForm.get('birthDate').setValue(this.person.basicData.birthDate);
         this.personDetailForm.get('gender').setValue(this.genders.filter(s => s.value === person.basicData.gender)[0]);
 
-        this.personDetailForm.get('phoneNumber').setValue(person.contactData.phoneNumber);
-        this.personDetailForm.get('emailAddress').setValue(person.contactData.emailAddress);
+        if (person.contactData != null) {
+          this.personDetailForm.get('phoneNumber').setValue(person.contactData.phoneNumber);
+          this.personDetailForm.get('emailAddress').setValue(person.contactData.emailAddress);
+        }
 
-        this.personDetailForm.get('address').get('street').setValue(person.streetAddress.street);
-        this.personDetailForm.get('address').get('houseNumber').setValue(person.streetAddress.houseNumber);
-        this.personDetailForm.get('address').get('zip').setValue(person.streetAddress.zip);
-        this.personDetailForm.get('address').get('city').setValue(person.streetAddress.city);
-        this.personDetailForm.get('address').get('isoCountryCode').setValue(this.countries.filter(c => c.Code === person.streetAddress.isoCountryCode)[0]);
+        if (person.streetAddress != null) {
+          this.personDetailForm.get('address').get('street').setValue(person.streetAddress.street);
+          this.personDetailForm.get('address').get('houseNumber').setValue(person.streetAddress.houseNumber);
+          this.personDetailForm.get('address').get('zip').setValue(person.streetAddress.zip);
+          this.personDetailForm.get('address').get('city').setValue(person.streetAddress.city);
+          this.personDetailForm.get('address').get('isoCountryCode').setValue(this.countries.filter(c => c.Code === person.streetAddress.isoCountryCode)[0]);
+        }
       });
   }
 
@@ -358,9 +362,23 @@ export class PersonDetailComponent implements OnInit {
 
     this.personDetailForm.get('type').disable();
 
-    this.personService.updatePerson(personToBeSaved).subscribe({
-      complete: () => window.scroll(0,0),
-      error: _ => window.scroll(0,0),
-    });
+    if (personToBeSaved.id === null) {
+      const personIdRequestId = UUID.UUID();
+      this.personService.registerPersonId(personIdRequestId).pipe(
+        tap(id => {
+          personToBeSaved.id = id;
+          this.personService.updatePerson(personToBeSaved, personIdRequestId).subscribe({
+            complete: () => window.scroll(0, 0),
+            error: _ => window.scroll(0, 0),
+          });
+        })).subscribe();
+
+    } else {
+
+      this.personService.updatePerson(personToBeSaved, null).subscribe({
+        complete: () => window.scroll(0, 0),
+        error: _ => window.scroll(0, 0),
+      });
+    }
   }
 }

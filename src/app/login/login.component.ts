@@ -8,6 +8,7 @@ import {Claims} from "./claims";
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
+
   constructor(private oauthService: OAuthService) {
   }
 
@@ -23,10 +24,10 @@ export class LoginComponent {
     return this.oauthService.hasValidIdToken() && this.oauthService.hasValidAccessToken();
   }
 
-  public get name() {
+  public get loginName() {
 
     var claims = this.oauthService.getIdentityClaims() as Claims;
     if (!claims) return null;
-    return claims.given_name;
+    return {'value': claims.given_name};
   }
 }

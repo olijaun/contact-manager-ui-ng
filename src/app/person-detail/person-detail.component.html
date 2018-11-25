@@ -1,4 +1,5 @@
-<h1 *ngIf="this.isNew()" class="primary-header">New Person</h1><h1 *ngIf="!this.isNew()" class="primary-header">{{
+<h1 *ngIf="this.isNew()" class="primary-header">{{ 'person-detail.title-new' | translate }}</h1><h1 *ngIf="!this.isNew()"
+                                                                                      class="primary-header">{{
   personDetailForm.get('lastNameOrCompanyName').value | uppercase }}, {{
   personDetailForm.get('firstName').value |
   uppercase
@@ -20,23 +21,23 @@
 
             <mat-card-content fxLayout="column">
               <mat-form-field appearance="outline" class="component" gdArea="id">
-                <mat-label>Id</mat-label>
+                <mat-label>{{ 'member-id' | translate }}</mat-label>
                 <input name="id" matInput placeholder="Id" formControlName="id" readonly>
               </mat-form-field>
 
               <mat-form-field appearance="outline" gdArea="type">
-                <mat-label>Type</mat-label>
+                <mat-label>{{ 'person-type' | translate }}</mat-label>
                 <mat-select name="personType" [disabled]="!this.isNew()" formControlName="type">
                   <mat-option *ngFor="let personType of types" [value]="personType">
-                    {{ personType.viewValue }}
+                    {{ personType.viewValue | translate }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
 
               <div fxLayout="row wrap">
                 <mat-form-field appearance="outline" *ngIf="isPerson()" class="component" gdArea="firstName">
-                  <mat-label>First name</mat-label>
-                  <input name="firstName" matInput placeholder="First Name" formControlName="firstName">
+                  <mat-label>{{ 'firstName' | translate }}</mat-label>
+                  <input name="firstName" matInput formControlName="firstName">
                   <mat-error *ngFor="let validation of validation_messages.firstName">
                     <mat-error class="error-message"
                                *ngIf="personDetailForm.get('firstName').hasError(validation.type) && (personDetailForm.get('firstName').dirty || personDetailForm.get('firstName').touched)">
@@ -46,8 +47,8 @@
                 </mat-form-field>
 
                 <mat-form-field appearance="outline" gdArea="lastName">
-                  <mat-label>Last name</mat-label>
-                  <input name="lastNameOrCompanyName" matInput placeholder="Last Name" formControlName="lastNameOrCompanyName">
+                  <mat-label>{{ 'lastNameOrCompanyName' | translate }}</mat-label>
+                  <input name="lastNameOrCompanyName" matInput formControlName="lastNameOrCompanyName">
                   <mat-error *ngFor="let validation of validation_messages.lastName">
                     <mat-error class="error-message"
                                *ngIf="personDetailForm.get('lastNameOrCompanyName').hasError(validation.type) && (personDetailForm.get('lastNameOrCompanyName').dirty || personDetailForm.get('lastNameOrCompanyName').touched)">
@@ -58,8 +59,8 @@
               </div>
 
               <mat-form-field *ngIf="isPerson()" appearance="outline" gdArea="birthDate">
-
-                <input matInput [matDatepicker]="dp" placeholder="Birth date" formControlName="birthDate">
+                <mat-label>{{ 'birthDate' | translate }}</mat-label>
+                <input matInput [matDatepicker]="dp" formControlName="birthDate">
                 <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
                 <mat-datepicker #dp></mat-datepicker>
                 <mat-error *ngFor="let validation of validation_messages.birthDate">
@@ -72,9 +73,10 @@
               </mat-form-field>
 
               <mat-form-field *ngIf="isPerson()" appearance="outline" gdArea="sex">
-                <mat-select placeholder="Sex" formControlName="sex">
+                <mat-label>{{ 'gender' | translate }}</mat-label>
+                <mat-select formControlName="sex">
                   <mat-option *ngFor="let sex of sexes" [value]="sex">
-                    {{ sex.viewValue }}
+                    {{ sex.viewValue | translate }}
                   </mat-option>
                 </mat-select>
                 <mat-error *ngFor="let validation of validation_messages.sex">
@@ -94,27 +96,26 @@
             <mat-card-content fxLayout="column">
               <div>
                 <mat-form-field appearance="standard">
-                  <mat-label>Street</mat-label>
+                  <mat-label>{{ 'street' | translate }}</mat-label>
                   <input matInput placeholder="" formControlName="street">
                 </mat-form-field>
                 <mat-form-field appearance="standard">
-                  <mat-label>Number</mat-label>
+                  <mat-label>{{ 'houseNumber' | translate }}</mat-label>
                   <input matInput placeholder="" formControlName="streetNumber">
                 </mat-form-field>
               </div>
               <div>
                 <mat-form-field appearance="standard">
-                  <mat-label>Zip</mat-label>
+                  <mat-label>{{ 'zip' | translate }}</mat-label>
                   <input matInput placeholder="" formControlName="zip">
                 </mat-form-field>
                 <mat-form-field appearance="standard">
-                  <mat-label>City</mat-label>
+                  <mat-label>{{ 'city' | translate }}</mat-label>
                   <input matInput placeholder="" formControlName="city">
                 </mat-form-field>
                 <mat-form-field class="example-full-width">
+                  <mat-label>{{ 'country' | translate }}</mat-label>
                   <input type="text"
-                         placeholder="Country"
-                         aria-label="Country"
                          matInput
                          formControlName="isoCountryCode"
                          [matAutocomplete]="auto">
@@ -136,11 +137,11 @@
           <mat-card>
             <mat-card-content fxLayout="column">
               <mat-form-field appearance="outline">
-                <mat-label>E-Mail Address</mat-label>
+                <mat-label>{{ 'email-address' | translate }}</mat-label>
                 <input name="emailAddress" matInput placeholder="me@mail.com" formControlName="emailAddress">
               </mat-form-field>
               <mat-form-field appearance="outline">
-                <mat-label>Phone Number</mat-label>
+                <mat-label>{{ 'phone-number' | translate }}</mat-label>
                 <input name="phoneNumber" matInput placeholder="" formControlName="phoneNumber">
               </mat-form-field>
             </mat-card-content>

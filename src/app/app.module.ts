@@ -2,8 +2,10 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppComponent} from './app.component';
-import {HttpClientModule} from '@angular/common/http';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {PersonDetailComponent} from './person-detail/person-detail.component';
+import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
 import {MessagesComponent} from './messages/messages.component';
 import {AppRoutingModule} from './app-routing.module';
 // import {HttpClientInMemoryWebApiModule} from 'angular-in-memory-web-api';
@@ -40,6 +42,11 @@ import { MemberSearchComponent } from './member-search/member-search.component';
 import { MemberDetailComponent } from './member-detail/member-detail.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+
+// AoT requires an exported function for factories
+export function HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http);
+}
 
 @NgModule({
   declarations: [
@@ -94,6 +101,13 @@ import { DashboardComponent } from './dashboard/dashboard.component';
         allowedUrls: ['https://localhost:8443/api'],
         sendAccessToken: true
       }
+    }),
+    TranslateModule.forRoot({
+      loader: {
+        provide: TranslateLoader,
+        useFactory: HttpLoaderFactory,
+        deps: [HttpClient]
+      }
     })
   ],
   exports: [
@@ -102,6 +116,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     MatIconModule,
     MatListModule,
     MatTabsModule,
+    TranslateModule
   ],
   providers: [
     // {provide: AuthConfig, useValue: authConfig },

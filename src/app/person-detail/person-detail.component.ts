@@ -67,13 +67,13 @@ export class PersonDetailComponent implements OnInit {
   // streetAddress: StreetAddress;
   // contactData: ContactData;
   sexes = [
-    {value: 'MALE', viewValue: 'Male'},
-    {value: 'FEMALE', viewValue: 'Female'}
+    {value: 'MALE', viewValue: 'male'},
+    {value: 'FEMALE', viewValue: 'female'}
   ];
 
   types = [
-    {value: 'NATURAL', viewValue: 'Person'},
-    {value: 'JURISTIC', viewValue: 'Company'}
+    {value: 'NATURAL', viewValue: 'natural-person'},
+    {value: 'JURISTIC', viewValue: 'juristic-person'}
   ];
 
   constructor(

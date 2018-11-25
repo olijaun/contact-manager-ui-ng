@@ -1,6 +1,6 @@
 <!--<div class="test">-->
 <div class="primary-header">
-  <h1>Search</h1>
+  <h1>{{ 'member-search.title' | translate }}</h1>
 </div>
 <div id="member-search-component" class="container" fxLayout="column">
 
@@ -8,13 +8,15 @@
 
   <div>
     <mat-form-field appearance="standard" fxFill>
-      <input matInput placeholder="Lastname or firstname" #searchBox id="search-box" (keyup)="search(searchBox.value)"/>
+      <mat-label>{{ 'member-search.search-term' | translate  }}</mat-label>
+      <input matInput placeholder="{{ 'member-search.search-term-placeholder' | translate }}" #searchBox id="search-box"
+             (keyup)="search(searchBox.value)"/>
     </mat-form-field>
   </div>
 
   <div>
     <mat-form-field appearance="standard">
-      <mat-label>Subscription Period</mat-label>
+      <mat-label>{{ 'subscription-period' | translate  }}</mat-label>
       <mat-select name="subscriptionPeriod" [(ngModel)]="selectedPeriod" (selectionChange)="periodChanged($event.value)">
         <mat-option *ngFor="let subscriptionPeriod of subscriptionPeriods" [value]="subscriptionPeriod">
           {{ subscriptionPeriod.name }}
@@ -26,27 +28,27 @@
   <table mat-table [dataSource]="members$" class="mat-elevation-z8" matSort (matSortChange)="sortData($event)">
 
     <ng-container matColumnDef="id">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Id.</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'member-id' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{element.id}}</td>
     </ng-container>
 
     <ng-container matColumnDef="lastNameOrCompanyName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Last name</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'lastNameOrCompanyName' | translate }}</th>
       <td mat-cell *matCellDef="let element"> {{element.lastNameOrCompanyName}}</td>
     </ng-container>
 
     <ng-container matColumnDef="firstName">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>First name</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'firstName' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{element.firstName}}</td>
     </ng-container>
 
     <ng-container matColumnDef="address">
-      <th mat-header-cell *matHeaderCellDef>Address</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'address' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{element.address}}</td>
     </ng-container>
 
     <ng-container matColumnDef="subscriptionType">
-      <th mat-header-cell *matHeaderCellDef>Subscription Type</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'subscription-type' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{subscriptionNameByMember(element)}}</td>
     </ng-container>
 

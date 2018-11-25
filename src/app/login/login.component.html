@@ -1,11 +1,12 @@
+<div class="primary-header">
+  <h1>{{ 'login.title' | translate }}</h1>
+</div>
 <div class="container">
 
   <mat-card class="example-container">
 
-    <mat-card-title>Welcome to Club Manager</mat-card-title>
-
     <mat-card-content class="example-container" *ngIf="isLoggedIn()">
-      You are currently logged in as {{ name }}.
+      {{ "login.logged-in-as" | translate:loginName }}
     </mat-card-content>
     <mat-card-content class="example-container" *ngIf="!isLoggedIn()">
       You are currently not logged in.

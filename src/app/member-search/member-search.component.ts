@@ -9,6 +9,7 @@ import {MemberSearchCriteria} from "./MemberSearchCriteria";
 import {isNullOrUndefined} from "util";
 import {MessageService} from "../message.service";
 import {Sort} from "@angular/material";
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-member-search',

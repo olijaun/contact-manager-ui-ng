@@ -7,8 +7,8 @@ import {MemberDetailComponent} from "./member-detail/member-detail.component";
 import {WelcomeComponent} from "./welcome/welcome.component";
 
 const routes: Routes = [
-  // {path: '', redirectTo: '/login', pathMatch: 'full'},
-  {path: '', component: WelcomeComponent},
+  {path: '', redirectTo: '/login', pathMatch: 'full'},
+  // {path: '', component: LoginComponent},
   {path: 'login', component: LoginComponent},
   {path: 'search', component: MemberSearchComponent},
   {path: 'person-detail/:id', component: PersonDetailComponent},

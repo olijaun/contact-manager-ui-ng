@@ -8,6 +8,7 @@ import {MemberService} from "../member.service";
 import {MemberSearchCriteria} from "./MemberSearchCriteria";
 import {isNullOrUndefined} from "util";
 import {MessageService} from "../message.service";
+import {Sort} from "@angular/material";
 
 @Component({
   selector: 'app-member-search',
@@ -24,7 +25,7 @@ export class MemberSearchComponent implements OnInit {
   searchCriteria = new MemberSearchCriteria();
 
   //displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
-  displayedColumns = ['firstName', 'lastNameOrCompanyName', 'address', 'subscriptionType'];
+  displayedColumns = ['id', 'lastNameOrCompanyName', 'firstName', 'address', 'subscriptionType'];
 
   constructor(private memberService: MemberService, private messageService: MessageService, private location: Location, private router: Router) {
     this.subscriptionPeriods = [];
@@ -60,10 +61,25 @@ export class MemberSearchComponent implements OnInit {
       distinctUntilChanged(),
 
       // switch to new search observable each time the term changes
-      switchMap((term: MemberSearchCriteria) => this.memberService.searchMembers(term.searchString, this.selectedPeriod.id)),
+      switchMap((term: MemberSearchCriteria) => this.memberService.searchMembers(term)),
     );
 
     this.loadSubscriptionPeriods();
+  }
+
+  sortData(sort: Sort) {
+
+    if (!sort.active || sort.direction === '') {
+      return;
+    }
+
+    console.log('search order changed');
+    var c = new MemberSearchCriteria();
+    c.searchString = this.searchCriteria.searchString;
+    c.periodId = this.searchCriteria.periodId;
+    c.ascending = sort.direction === 'asc';
+    c.sortBy = sort.active;
+    this.searchTerms.next(c);
   }
 
   rowClicked(clickedMember: Member): void {

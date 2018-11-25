@@ -2,17 +2,17 @@
 <div>
   <div *ngFor='let message of messageService.technicalErrors'>
     <mat-card class="technical-error-card">
-      {{ message }}
+      {{ message | translate }}
     </mat-card>
   </div>
   <div *ngFor='let message of messageService.businessErrors'>
     <mat-card class="business-error-card">
-      {{ message }}
+      {{ message | translate }}
     </mat-card>
   </div>
   <div *ngFor='let message of messageService.info'>
     <mat-card class="info-message-card">
-      {{ message }}
+      {{ message | translate }}
     </mat-card>
   </div>
 </div>

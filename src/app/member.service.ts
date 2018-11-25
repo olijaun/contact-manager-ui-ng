@@ -75,10 +75,10 @@ export class MemberService {
   }
 
   searchMembers(searchCriteria: MemberSearchCriteria): Observable<Member[]> {
-    if (!searchCriteria.searchString.trim() && !searchCriteria.periodId.trim()) {
-      // if not search term, return empty hero array.
-      return of([]);
-    }
+    // if (!searchCriteria.searchString.trim() && !searchCriteria.periodId.trim()) {
+    //   // if not search term, return empty hero array.
+    //   return of([]);
+    // }
 
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
 

@@ -16,7 +16,7 @@ export class DefaultServiceErrorHandler {
         const httpError: HttpErrorResponse = error as HttpErrorResponse;
 
         if (httpError.status >= 400 && httpError.status <= 500) {
-          messageService.addBusinessError("A Validation error occured");
+          messageService.addBusinessError("validation-error");
 
           if (result) {
             return of(result as T);
@@ -26,7 +26,7 @@ export class DefaultServiceErrorHandler {
         }
       }
 
-      messageService.addTechnicalError('A technical error occured. Contact your system administrator: ' + error.message);
+      messageService.addTechnicalError('technical-error', error);
 
       if (result) {
         return of(result as T);

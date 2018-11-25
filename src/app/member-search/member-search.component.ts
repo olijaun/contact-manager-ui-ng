@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
-import {debounceTime, distinctUntilChanged, switchMap} from "rxjs/operators";
+import {debounceTime, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
 import {Location} from "@angular/common";
 import {Member, SubscriptionPeriod} from "../member";
 import {MemberService} from "../member.service";
@@ -9,7 +9,6 @@ import {MemberSearchCriteria} from "./MemberSearchCriteria";
 import {isNullOrUndefined} from "util";
 import {MessageService} from "../message.service";
 import {Sort} from "@angular/material";
-import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-member-search',
@@ -41,11 +40,16 @@ export class MemberSearchComponent implements OnInit {
   // Push a search term into the observable stream.
   search(term: string): void {
     console.log('search term: ' + term);
+
     this.searchCriteria.searchString = term;
+
+    this.searchTerm = term;
 
     var c = new MemberSearchCriteria();
     c.searchString = this.searchCriteria.searchString;
-    c.periodId = this.searchCriteria.periodId;
+    c.periodId = this.selectedPeriod.id;
+    c.sortBy = this.searchCriteria.sortBy;
+    c.ascending = this.searchCriteria.ascending;
 
     this.searchTerms.next(c);
   }
@@ -55,6 +59,7 @@ export class MemberSearchComponent implements OnInit {
     this.messageService.clear();
 
     this.members$ = this.searchTerms.pipe(
+      tap(_ => this.messageService.clear()),
       // wait 300ms after each keystroke before considering the term
       debounceTime(300),
 
@@ -74,12 +79,18 @@ export class MemberSearchComponent implements OnInit {
       return;
     }
 
-    console.log('search order changed');
+    this.searchCriteria.periodId = this.selectedPeriod.id;
+    this.searchCriteria.sortBy = this.searchCriteria.sortBy;
+    this.searchCriteria.ascending = this.searchCriteria.ascending;
+
     var c = new MemberSearchCriteria();
     c.searchString = this.searchCriteria.searchString;
-    c.periodId = this.searchCriteria.periodId;
+    c.periodId = this.selectedPeriod.id;
     c.ascending = sort.direction === 'asc';
     c.sortBy = sort.active;
+
+    console.log("search with: " + JSON.stringify(c));
+
     this.searchTerms.next(c);
   }
 
@@ -92,9 +103,17 @@ export class MemberSearchComponent implements OnInit {
   periodChanged(period: SubscriptionPeriod): void {
     // this.searchCriteria.periodId = period.id;
     // this.searchTerms.next(this.searchCriteria);
+
+    this.selectedPeriod = period;
+
+    this.searchCriteria.periodId = period.id;
+
     var c = new MemberSearchCriteria();
     c.searchString = this.searchCriteria.searchString;
-    c.periodId = period.id;
+    c.periodId = this.searchCriteria.periodId;
+    c.ascending = this.searchCriteria.ascending;
+    c.sortBy = this.searchCriteria.sortBy;
+
     this.searchTerms.next(c);
     console.log('period changed');
   }
@@ -103,7 +122,11 @@ export class MemberSearchComponent implements OnInit {
 
     this.memberService.getSubscriptionPeriods()
       .subscribe(subscriptionPeriods => {
-        this.subscriptionPeriods = subscriptionPeriods;
+        const empty = new SubscriptionPeriod();
+        empty.id = "";
+        empty.name = "*";
+        empty.subscriptionTypes = [];
+        this.subscriptionPeriods = [empty, ...subscriptionPeriods];
         //this.subscriptionsDataSource = new MatTableDataSource<Subscription>(this.member.subscriptions)
       });
   }

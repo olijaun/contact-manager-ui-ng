@@ -1,4 +1,7 @@
 {
+  "technical-error": "Ein technischer Fehler ist aufgetreten. Versuchen sie es später erneut",
+  "validation-error": "Ein Eingabe ist ungültig",
+
   "subscription-period": "Periode",
   "firstName": "Vorname",
   "lastNameOrCompanyName": "Nachname",
@@ -20,6 +23,8 @@
   "male": "männlich",
   "female": "weiblich",
 
+  "menu": "Menu",
+
   "member-search": {
     "title": "Mitgliedersuche",
     "search-term": "Suchbegriff",
@@ -39,7 +44,8 @@
   },
 
   "login": {
-    "title": "Willkommen beim Club Manager",
+    "title": "Anmeldung",
+    "welcome": "Willkommen beim Club Manager",
     "logged-in-as": "Sie sind angemeldet als {{value}}"
   }
 }

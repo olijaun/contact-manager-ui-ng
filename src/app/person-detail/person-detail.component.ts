@@ -88,8 +88,8 @@ export class PersonDetailComponent implements OnInit {
     this.personDetailForm = this.fb.group({
       id: new FormControl(UUID.UUID()),
       type: new FormControl(this.types[0]),
-      firstName: new FormControl(null, [Validators.maxLength(256)]),
-      lastNameOrCompanyName: new FormControl(null), //, [Validators.required, Validators.maxLength(256)]),
+      firstName: new FormControl(null, [Validators.maxLength(60)]),
+      lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(60)]),
       birthDate: this.birthDateControl,
       sex: new FormControl(null),
       phoneNumber: new FormControl(null, PhoneValidator.validCountryPhone(this.country)),
@@ -260,7 +260,7 @@ export class PersonDetailComponent implements OnInit {
 
         this.personDetailForm.get('firstName').setValue(person.basicData.name.firstName);
         this.personDetailForm.get('lastNameOrCompanyName').setValue(person.basicData.name.lastNameOrCompanyName);
-        if (person.basicData != null) {
+        if (person.basicData.birthDate != null) {
           this.birthDateControl.setValue(_moment(person.basicData.birthDate));
         }
         //this.personDetailForm.get('birthDate').setValue(this.person.basicData.birthDate);

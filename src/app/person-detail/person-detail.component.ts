@@ -57,7 +57,7 @@ export class PersonDetailComponent implements OnInit {
     'birthDate': [
       // {type: 'required', message: 'Please insert your birthday'},
     ],
-    'sex': [
+    'gender': [
       {type: 'required', message: 'Please select your gender'},
     ]
   };
@@ -66,7 +66,7 @@ export class PersonDetailComponent implements OnInit {
   // basicData: BasicData;
   // streetAddress: StreetAddress;
   // contactData: ContactData;
-  sexes = [
+  genders = [
     {value: 'MALE', viewValue: 'male'},
     {value: 'FEMALE', viewValue: 'female'}
   ];
@@ -91,12 +91,12 @@ export class PersonDetailComponent implements OnInit {
       firstName: new FormControl(null, [Validators.maxLength(60)]),
       lastNameOrCompanyName: new FormControl(null, [Validators.required, Validators.maxLength(60)]),
       birthDate: this.birthDateControl,
-      sex: new FormControl(null),
+      gender: new FormControl(null),
       phoneNumber: new FormControl(null, PhoneValidator.validCountryPhone(this.country)),
       emailAddress: new FormControl('', [Validators.email]), //, [this.requiredIfAddressNonEmpty()]),
       address: fb.group({
         street: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
-        streetNumber: new FormControl(''), //[]),
+        houseNumber: new FormControl(''), //[]),
         zip: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
         city: new FormControl(''), //, [this.requiredIfAddressNonEmpty()]),
         isoCountryCode: this.country,
@@ -182,7 +182,7 @@ export class PersonDetailComponent implements OnInit {
   addressValidator(control: FormControl): { [key: string]: boolean } {
 
     var street = control.get('street').value;
-    var number = control.get('streetNumber').value;
+    var number = control.get('houseNumber').value;
     var zip = control.get('zip').value;
     var city = control.get('city').value;
     var country = control.get('isoCountryCode').value;
@@ -264,13 +264,13 @@ export class PersonDetailComponent implements OnInit {
           this.birthDateControl.setValue(_moment(person.basicData.birthDate));
         }
         //this.personDetailForm.get('birthDate').setValue(this.person.basicData.birthDate);
-        this.personDetailForm.get('sex').setValue(this.sexes.filter(s => s.value === person.basicData.sex)[0]);
+        this.personDetailForm.get('gender').setValue(this.genders.filter(s => s.value === person.basicData.gender)[0]);
 
         this.personDetailForm.get('phoneNumber').setValue(person.contactData.phoneNumber);
         this.personDetailForm.get('emailAddress').setValue(person.contactData.emailAddress);
 
         this.personDetailForm.get('address').get('street').setValue(person.streetAddress.street);
-        this.personDetailForm.get('address').get('streetNumber').setValue(person.streetAddress.streetNumber);
+        this.personDetailForm.get('address').get('houseNumber').setValue(person.streetAddress.houseNumber);
         this.personDetailForm.get('address').get('zip').setValue(person.streetAddress.zip);
         this.personDetailForm.get('address').get('city').setValue(person.streetAddress.city);
         this.personDetailForm.get('address').get('isoCountryCode').setValue(this.countries.filter(c => c.Code === person.streetAddress.isoCountryCode)[0]);
@@ -288,7 +288,7 @@ export class PersonDetailComponent implements OnInit {
 
 
   isEmptyStreetAddress(address: StreetAddress) {
-    return (isNil(address.street) && isNil(address.city) && isNil(address.state) && isNil(address.streetNumber) && isNil(address.zip));
+    return (isNil(address.street) && isNil(address.city) && isNil(address.state) && isNil(address.houseNumber) && isNil(address.zip));
   }
 
   isEmptyContactData(contactData: ContactData) {
@@ -325,8 +325,8 @@ export class PersonDetailComponent implements OnInit {
     if (personToBeSaved.type === "NATURAL") {
       personToBeSaved.basicData.name.firstName = this.personDetailForm.get('firstName').value;
 
-      if (this.personDetailForm.get('sex').value) {
-        personToBeSaved.basicData.sex = this.personDetailForm.get('sex').value.value;
+      if (this.personDetailForm.get('gender').value) {
+        personToBeSaved.basicData.gender = this.personDetailForm.get('gender').value.value;
       }
 
       if (!isNullOrUndefined(this.birthDateControl.value)) {
@@ -346,7 +346,7 @@ export class PersonDetailComponent implements OnInit {
     // street address
     var streetAddress = new StreetAddress();
     streetAddress.street = this.personDetailForm.get('address').get('street').value as string;
-    streetAddress.streetNumber = this.personDetailForm.get('address').get('streetNumber').value as string;
+    streetAddress.houseNumber = this.personDetailForm.get('address').get('houseNumber').value as string;
     streetAddress.zip = this.personDetailForm.get('address').get('zip').value as string;
     streetAddress.city = this.personDetailForm.get('address').get('city').value as string;
     streetAddress.isoCountryCode = this.personDetailForm.get('address').get('isoCountryCode').value.Code;

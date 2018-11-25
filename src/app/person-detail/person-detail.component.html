@@ -72,16 +72,16 @@
 
               </mat-form-field>
 
-              <mat-form-field *ngIf="isPerson()" appearance="outline" gdArea="sex">
+              <mat-form-field *ngIf="isPerson()" appearance="outline" gdArea="gender">
                 <mat-label>{{ 'gender' | translate }}</mat-label>
-                <mat-select formControlName="sex">
-                  <mat-option *ngFor="let sex of sexes" [value]="sex">
-                    {{ sex.viewValue | translate }}
+                <mat-select formControlName="gender">
+                  <mat-option *ngFor="let gender of genders" [value]="gender">
+                    {{ gender.viewValue | translate }}
                   </mat-option>
                 </mat-select>
-                <mat-error *ngFor="let validation of validation_messages.sex">
+                <mat-error *ngFor="let validation of validation_messages.gender">
                   <mat-error class="error-message"
-                             *ngIf="personDetailForm.get('sex').hasError(validation.type) && (personDetailForm.get('sex').dirty || personDetailForm.get('sex').touched)">
+                             *ngIf="personDetailForm.get('gender').hasError(validation.type) && (personDetailForm.get('gender').dirty || personDetailForm.get('gender').touched)">
                     {{validation.message}}
                   </mat-error>
                 </mat-error>
@@ -101,7 +101,7 @@
                 </mat-form-field>
                 <mat-form-field appearance="standard">
                   <mat-label>{{ 'houseNumber' | translate }}</mat-label>
-                  <input matInput placeholder="" formControlName="streetNumber">
+                  <input matInput placeholder="" formControlName="houseNumber">
                 </mat-form-field>
               </div>
               <div>

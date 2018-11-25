@@ -8,7 +8,7 @@ export class Person {
 
 export class BasicData {
   public name: Name;
-  public sex: string;
+  public gender: string;
   public birthDate: string;
 }
 
@@ -24,7 +24,7 @@ export class Name {
 
 export class StreetAddress {
   public street: string;
-  public streetNumber: string;
+  public houseNumber: string;
   public zip: string;
   public city: string;
   public isoCountryCode: string;

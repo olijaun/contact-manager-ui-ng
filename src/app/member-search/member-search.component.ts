@@ -1,7 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {Router} from "@angular/router";
-import {debounceTime, distinctUntilChanged, switchMap, tap} from "rxjs/operators";
+import {debounceTime, distinctUntilChanged, map, switchMap, tap} from "rxjs/operators";
 import {Location} from "@angular/common";
 import {Member, SubscriptionPeriod} from "../member";
 import {MemberService} from "../member.service";
@@ -23,9 +23,16 @@ export class MemberSearchComponent implements OnInit {
   selectedPeriod: SubscriptionPeriod;
   searchTerm: string;
   searchCriteria = new MemberSearchCriteria();
+  totalResults: number = 0;
 
-  //displayedColumns = ['id', 'firstName', 'lastNameOrCompanyName'];
-  displayedColumns = ['id', 'lastNameOrCompanyName', 'firstName', 'address', 'subscriptionType'];
+  columnDefinitions = [
+    {def: 'id', showMobile: true},
+    {def: 'lastNameOrCompanyName', showMobile: true},
+    {def: 'firstName', showMobile: true},
+    {def: 'address', showMobile: false},
+    {def: 'subscriptionType', showMobile: false}];
+
+ // isMobile: boolean = false;
 
   constructor(private memberService: MemberService, private messageService: MessageService, private location: Location, private router: Router) {
     this.subscriptionPeriods = [];
@@ -35,6 +42,17 @@ export class MemberSearchComponent implements OnInit {
 
     this.searchCriteria.searchString = "";
     this.searchCriteria.periodId = "";
+  }
+
+  // @HostListener('window:resize', ['$event'])
+  // onResize(event) {
+  //   this.isMobile = window.innerWidth < 200;
+  //   console.log("isMobile: " + this.isMobile);
+  // }
+
+  isMobile() : boolean {
+    console.log("is mobile: " + (window.innerWidth < 640));
+    return window.innerWidth < 640;
   }
 
   // Push a search term into the observable stream.
@@ -67,10 +85,19 @@ export class MemberSearchComponent implements OnInit {
       distinctUntilChanged(),
 
       // switch to new search observable each time the term changes
-      switchMap((term: MemberSearchCriteria) => this.memberService.searchMembers(term)),
+      switchMap((term: MemberSearchCriteria) => this.memberService.searchMembers(term).pipe(
+        map(members => members.members),
+        tap(members => this.totalResults = members.length)
+      )),
     );
 
     this.loadSubscriptionPeriods();
+  }
+
+  getDisplayedColumns(): string[] {
+    return this.columnDefinitions
+      .filter(cd => !this.isMobile() || cd.showMobile)
+      .map(cd => cd.def);
   }
 
   sortData(sort: Sort) {
@@ -95,7 +122,7 @@ export class MemberSearchComponent implements OnInit {
   }
 
   rowClicked(clickedMember: Member): void {
-    console.log(clickedMember.id);
+    console.log("clicked member: " + clickedMember.id);
     this.router.navigateByUrl('/member-detail/' + clickedMember.id); // TODO: why does location.go not work?
     // this.location.go('/detail/' + clickedContact.contactId);
   }

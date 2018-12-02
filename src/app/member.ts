@@ -1,3 +1,7 @@
+export class Members {
+  public members: Member[] = [];
+}
+
 export class Member {
   public id: string;
   public firstName: string;

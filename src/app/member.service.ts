@@ -1,10 +1,10 @@
 import {Injectable} from '@angular/core';
 import {Observable, of} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {catchError, map, tap} from 'rxjs/operators';
+import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
-import {Member, SubscriptionPeriod, SubscriptionPeriods, SubscriptionTypes} from "./member";
+import {Member, Members, SubscriptionPeriod, SubscriptionPeriods, SubscriptionTypes} from "./member";
 import {DefaultServiceErrorHandler} from "./default-service-error-handler";
 import {MemberSearchCriteria} from "./member-search/MemberSearchCriteria";
 
@@ -30,10 +30,10 @@ export class MemberService {
     );
   }
 
-  getMembers(): Observable<Member[]> {
+  getMembers(): Observable<Members> {
     // TODO: send the message _after_ fetching the heroes
-    return this.http.get<Member[]>(this.memberUrl).pipe(
-      catchError(this.handleError('getHeroes', []))
+    return this.http.get<Members>(this.memberUrl).pipe(
+      catchError(this.handleError<Members>('getMembers', new Members()))
     );
   }
 
@@ -75,7 +75,7 @@ export class MemberService {
     );
   }
 
-  searchMembers(searchCriteria: MemberSearchCriteria): Observable<Member[]> {
+  searchMembers(searchCriteria: MemberSearchCriteria): Observable<Members> {
     // if (!searchCriteria.searchString.trim() && !searchCriteria.periodId.trim()) {
     //   // if not search term, return empty hero array.
     //   return of([]);
@@ -83,8 +83,8 @@ export class MemberService {
 
     // https://github.com/jeroenheijmans/sample-auth0-angular-oauth2-oidc/blob/master/DemoApp/src/app/app.module.ts
 
-    return this.http.get<Member[]>(`${this.memberUrl}/?searchString=${searchCriteria.searchString}&subscriptionPeriodId=${searchCriteria.periodId}&sortBy=${searchCriteria.sortBy}&sortAscending=${searchCriteria.ascending}`, this.getOptions()).pipe(
-      catchError(this.handleError<Member[]>('searchMembers', []))
+    return this.http.get<Members>(`${this.memberUrl}/?searchString=${searchCriteria.searchString}&subscriptionPeriodId=${searchCriteria.periodId}&sortBy=${searchCriteria.sortBy}&sortAscending=${searchCriteria.ascending}`, this.getOptions()).pipe(
+      catchError(this.handleError<Members>('searchMembers', new Members()))
     );
   }
 

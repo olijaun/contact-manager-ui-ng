@@ -88,6 +88,22 @@ export class MemberService {
     );
   }
 
+  downloadCsv(searchCriteria: MemberSearchCriteria) : Observable<any> {
+
+    // let headers = new HttpHeaders();
+    // headers = headers.set('Accept', 'text/csv');
+    // return this.http.get('/api/persons', { headers: headers, responseType: 'blob' as 'json' });
+
+    var headers = new HttpHeaders({
+      'Accept': 'text/csv',
+      "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    });
+
+    return this.http.get(`${this.memberUrl}/?searchString=${searchCriteria.searchString}&subscriptionPeriodId=${searchCriteria.periodId}&sortBy=${searchCriteria.sortBy}&sortAscending=${searchCriteria.ascending}`, { headers, responseType: "arraybuffer" } ).pipe(
+      catchError(this.handleError('download'))
+    );
+  }
+
   getOptions() {
     return {
       headers: new HttpHeaders({
@@ -99,6 +115,8 @@ export class MemberService {
     //   "Authorization": "Bearer " + this.oauthService.getAccessToken()
     // });
   }
+
+
 
   private handleError<T>(operation = 'operation', result?: T) {
     return DefaultServiceErrorHandler.handleError(this.messageService, operation, result);

@@ -9,6 +9,7 @@ import {MemberSearchCriteria} from "./MemberSearchCriteria";
 import {isNullOrUndefined} from "util";
 import {MessageService} from "../message.service";
 import {Sort} from "@angular/material";
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-member-search',
@@ -70,6 +71,18 @@ export class MemberSearchComponent implements OnInit {
     c.ascending = this.searchCriteria.ascending;
 
     this.searchTerms.next(c);
+  }
+
+  download() : void {
+
+    console.log("searchCriteria: " + JSON.stringify(this.searchCriteria));
+
+    this.memberService.downloadCsv(this.searchCriteria).subscribe(
+      (res) => {
+        const blob = new Blob([res], { type: 'text/csv' });
+        saveAs(blob, "test.csv");
+      }
+    );
   }
 
   ngOnInit(): void {
@@ -196,4 +209,6 @@ export class MemberSearchComponent implements OnInit {
     }
     return subscriptionTypes[0].name;
   }
+
+
 }

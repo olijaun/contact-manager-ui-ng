@@ -8,6 +8,7 @@ import { authConfig } from './auth.config';
 import {MessageService} from "./message.service";
 import {TranslateService} from "@ngx-translate/core";
 
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',

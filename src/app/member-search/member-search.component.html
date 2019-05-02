@@ -7,6 +7,10 @@
   <app-messages></app-messages>
 
   <div>
+
+    <button class="submit-btn" color="primary" mat-raised-button type="submit" (click)="download()">download
+    </button>
+
     <mat-form-field appearance="standard" fxFill>
       <mat-label>{{ 'member-search.search-term' | translate  }}</mat-label>
       <input matInput placeholder="{{ 'member-search.search-term-placeholder' | translate }}" #searchBox id="search-box"

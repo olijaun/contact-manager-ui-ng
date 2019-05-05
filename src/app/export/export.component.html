@@ -1,0 +1,15 @@
+<div class="primary-header">
+  <h1>{{ 'export.title' | translate }}</h1>
+</div>
+<div class="container" fxLayout="column" fxLayoutGap="10pt">
+
+  <app-messages></app-messages>
+
+  <button class="submit-btn" color="primary" mat-raised-button type="submit" (click)="exportPersons()">{{ 'export.export-persons' | translate }}
+  </button>
+
+  <button class="submit-btn" color="primary" mat-raised-button type="submit" (click)="exportMembers()">{{ 'export.export-members' | translate }}
+  </button>
+
+</div>
+

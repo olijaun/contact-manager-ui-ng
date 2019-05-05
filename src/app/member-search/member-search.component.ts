@@ -73,11 +73,11 @@ export class MemberSearchComponent implements OnInit {
     this.searchTerms.next(c);
   }
 
-  download() : void {
+  downloadCsv() : void {
 
     console.log("searchCriteria: " + JSON.stringify(this.searchCriteria));
 
-    this.memberService.downloadCsv(this.searchCriteria).subscribe(
+    this.memberService.exportCsv(this.searchCriteria).subscribe(
       (res) => {
         const blob = new Blob([res], { type: 'text/csv' });
         saveAs(blob, "test.csv");

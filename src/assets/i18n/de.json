@@ -28,7 +28,8 @@
   "member-search": {
     "title": "Mitgliedersuche",
     "search-term": "Suchbegriff",
-    "search-term-placeholder": "Vorname, Nachname oder Mitgliedernummer"
+    "search-term-placeholder": "Vorname, Nachname oder Mitgliedernummer",
+    "exportCsv": "Daten als CSV exportieren"
   },
 
   "member-detail": {
@@ -41,6 +42,12 @@
   "person-detail": {
     "title-new": "Neue Person",
     "save": "Speichern"
+  },
+
+  "export": {
+    "title": "Export",
+    "export-persons": "Personen Exportieren",
+    "export-members": "Mitglieder Exportieren"
   },
 
   "login": {

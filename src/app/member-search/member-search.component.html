@@ -8,8 +8,7 @@
 
   <div>
 
-    <button class="submit-btn" color="primary" mat-raised-button type="submit" (click)="download()">download
-    </button>
+
 
     <mat-form-field appearance="standard" fxFill>
       <mat-label>{{ 'member-search.search-term' | translate  }}</mat-label>
@@ -63,4 +62,7 @@
     <tr mat-header-row *matHeaderRowDef="getDisplayedColumns()"></tr>
     <tr mat-row *matRowDef="let row; columns: getDisplayedColumns();" (click)="rowClicked(row)"></tr>
   </table>
+
+  <button class="submit-btn" color="primary" mat-raised-button type="submit" (click)="downloadCsv()">{{ 'member-search.exportCsv' | translate }}
+  </button>
 </div>

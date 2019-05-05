@@ -6,6 +6,7 @@ import {Person} from './person';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
 import {DefaultServiceErrorHandler} from "./default-service-error-handler";
+import {MemberSearchCriteria} from "./member-search/MemberSearchCriteria";
 
 const httpOptions = {
   headers: new HttpHeaders({'Content-Type': 'application/json'})
@@ -134,5 +135,21 @@ export class PersonService {
    */
   private handleError<T>(operation = 'operation', result?: T) {
     return DefaultServiceErrorHandler.handleError(this.messageService, operation, result);
+  }
+
+  exportCsv() : Observable<any> {
+
+    // let headers = new HttpHeaders();
+    // headers = headers.set('Accept', 'text/csv');
+    // return this.http.get('/api/persons', { headers: headers, responseType: 'blob' as 'json' });
+
+    var headers = new HttpHeaders({
+      'Accept': 'text/csv',
+      "Authorization": "Bearer " + this.oauthService.getAccessToken()
+    });
+
+    return this.http.get(`${this.personsUrl}`, { headers, responseType: "arraybuffer" } ).pipe(
+      catchError(this.handleError('exportCsv'))
+    );
   }
 }

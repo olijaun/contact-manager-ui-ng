@@ -5,6 +5,7 @@ import {LoginComponent} from './login/login.component';
 import {MemberSearchComponent} from "./member-search/member-search.component";
 import {MemberDetailComponent} from "./member-detail/member-detail.component";
 import {WelcomeComponent} from "./welcome/welcome.component";
+import {ExportComponent} from "./export/export.component";
 
 const routes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
@@ -13,7 +14,8 @@ const routes: Routes = [
   {path: 'search', component: MemberSearchComponent},
   {path: 'person-detail/:id', component: PersonDetailComponent},
   {path: 'member-detail/:id', component: MemberDetailComponent},
-  {path: 'new', component: PersonDetailComponent}
+  {path: 'new', component: PersonDetailComponent},
+  {path: 'export', component: ExportComponent},
 ];
 
 @NgModule({

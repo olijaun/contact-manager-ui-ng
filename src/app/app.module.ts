@@ -42,6 +42,7 @@ import { MemberSearchComponent } from './member-search/member-search.component';
 import { MemberDetailComponent } from './member-detail/member-detail.component';
 import { WelcomeComponent } from './welcome/welcome.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ExportComponent } from './export/export.component';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(http: HttpClient) {
@@ -59,6 +60,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     MemberDetailComponent,
     WelcomeComponent,
     DashboardComponent,
+    ExportComponent,
   ],
   imports: [
     BrowserModule,

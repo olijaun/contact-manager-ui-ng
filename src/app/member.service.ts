@@ -88,7 +88,7 @@ export class MemberService {
     );
   }
 
-  downloadCsv(searchCriteria: MemberSearchCriteria) : Observable<any> {
+  exportCsv(searchCriteria: MemberSearchCriteria) : Observable<any> {
 
     // let headers = new HttpHeaders();
     // headers = headers.set('Accept', 'text/csv');

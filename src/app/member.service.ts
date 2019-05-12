@@ -62,7 +62,7 @@ export class MemberService {
   updateMember(member: Member): Observable<Member> {
     return this.http.put(this.memberUrl + '/' + member.id, member, this.getOptions()).pipe(
       catchError(this.handleError<any>('updateMember')),
-      tap(p => this.messageService.addInfo("successfully saved memberships for member: " + member.id))
+      tap(p => this.messageService.addInfo("member-detail.member-saved", { 'value': member.id }))
     );
   }
 

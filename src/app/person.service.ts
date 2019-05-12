@@ -55,7 +55,7 @@ export class PersonService {
     console.log("updatePerson");
     return this.http.put(this.personsUrl + '/' + person.id, person, {...this.getOptionsWithRequestId(personIdRequestId), responseType: 'text'}).pipe(
       catchError(this.handleError<any>('updatePerson')),
-      tap(p => this.messageService.addInfo("successfully saved person: " + person.id))
+      tap(p => this.messageService.addInfo("person-detail.person-saved", { 'value': person.id } ))
     );
   }
 

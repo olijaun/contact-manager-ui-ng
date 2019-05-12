@@ -36,12 +36,14 @@
     "title": "Mitgliedschaften",
     "edit-person": "Person editieren...",
     "add-subscription": "Mitgliedschaft hinzufügen",
-    "save": "Speichern"
+    "save": "Speichern",
+    "member-saved": "Mitglied gespeichert: {{value}}"
   },
 
   "person-detail": {
     "title-new": "Neue Person",
-    "save": "Speichern"
+    "save": "Speichern",
+    "person-saved": "Person gespeichert: {{value}}"
   },
 
   "export": {

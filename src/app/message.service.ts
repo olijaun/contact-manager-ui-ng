@@ -34,10 +34,10 @@ export class MessageService {
     });
   }
 
-  addInfo(message: string) {
-    this.translate.get(message).subscribe(translatedMsg => {
+  addInfo(message: string, interpolateParams?: Object) {
+    this.translate.get(message, interpolateParams).subscribe(translatedMsg => {
       if (this.info.filter(m => m === translatedMsg).length === 0) {
-        this.info.push(message);
+        this.info.push(translatedMsg);
       }
     });
   }

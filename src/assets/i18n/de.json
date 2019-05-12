@@ -39,7 +39,8 @@
     "save": "Speichern",
     "member-saved": "Mitglied gespeichert: {{value}}",
     "subscription-action": "Aktion",
-    "delete-subscription": "Löschen"
+    "delete-subscription": "Löschen",
+    "subscription-deleted": "Migliedschaft gelöscht: {{value}}"
   },
 
   "person-detail": {

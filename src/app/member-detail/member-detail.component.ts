@@ -207,7 +207,6 @@ export class MemberDetailComponent implements OnInit {
   }
 
   deleteSubscription(subscription: Subscription) {
-    console.log("delllllllllllllllllllllllllllllllllllllll");
     this.memberService.deleteSubscription(this.member, subscription).subscribe((a : any[]) => {
         this.member.subscriptions = this.member.subscriptions.filter(s => s.id != subscription.id);
       }

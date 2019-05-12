@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {catchError, map, switchMap, tap} from 'rxjs/operators';
 import {MessageService} from './message.service';
 import {OAuthService} from "angular-oauth2-oidc";
-import {Member, Members, SubscriptionPeriod, SubscriptionPeriods, SubscriptionTypes} from "./member";
+import {Member, Members, Subscription, SubscriptionPeriod, SubscriptionPeriods, SubscriptionTypes} from "./member";
 import {DefaultServiceErrorHandler} from "./default-service-error-handler";
 import {MemberSearchCriteria} from "./member-search/MemberSearchCriteria";
 
@@ -66,12 +66,14 @@ export class MemberService {
     );
   }
 
-  deleteMember(member: Member | number): Observable<Member> {
-    const id = typeof member === 'number' ? member : member.id;
-    const url = `${this.memberUrl}/${id}`;
+  deleteSubscription(member: Member, subscription: Subscription): Observable<any> {
+    const id = subscription.id;
+    const memberId = member.id;
+    const url = `${this.memberUrl}/${memberId}/subscriptions/${id}`;
 
-    return this.http.delete<Member>(url, httpOptions).pipe(
-      catchError(this.handleError<Member>('deleteMember'))
+    return this.http.delete(url, this.getOptions()).pipe(
+      catchError(this.handleError('deleteSubscription')),
+      tap(p => this.messageService.addInfo("member-detail.subscription-deleted", { 'value': subscription.id }))
     );
   }
 

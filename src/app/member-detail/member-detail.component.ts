@@ -8,6 +8,7 @@ import {UUID} from "angular2-uuid";
 import {isNullOrUndefined} from "util";
 import {tap} from "rxjs/operators";
 import {MessageService} from "../message.service";
+import {isSuccess} from "angular-in-memory-web-api";
 
 @Component({
   selector: 'app-member-detail',
@@ -18,7 +19,7 @@ export class MemberDetailComponent implements OnInit {
 
   member: Member;
   // displayedColumns = ['id', 'subscriptionTypeId', 'subscriptionPeriodId'];
-  displayedColumns = ['subscriptionPeriodId', 'subscriptionTypeId'];
+  displayedColumns = ['subscriptionPeriodId', 'subscriptionTypeId', 'action'];
   subscriptionPeriods: SubscriptionPeriod[];
   membershipForm: FormGroup;
   subscriptionPeriod: FormControl = new FormControl(null, [Validators.required]);
@@ -203,5 +204,13 @@ export class MemberDetailComponent implements OnInit {
 
   editPersonClicked() {
     this.router.navigateByUrl('/person-detail/' + this.member.id); // TODO: why does location.go not work?
+  }
+
+  deleteSubscription(subscription: Subscription) {
+    console.log("delllllllllllllllllllllllllllllllllllllll");
+    this.memberService.deleteSubscription(this.member, subscription).subscribe((a : any[]) => {
+        this.member.subscriptions = this.member.subscriptions.filter(s => s.id != subscription.id);
+      }
+    );
   }
 }

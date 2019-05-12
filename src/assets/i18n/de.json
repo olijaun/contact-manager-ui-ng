@@ -37,7 +37,9 @@
     "edit-person": "Person editieren...",
     "add-subscription": "Mitgliedschaft hinzufügen",
     "save": "Speichern",
-    "member-saved": "Mitglied gespeichert: {{value}}"
+    "member-saved": "Mitglied gespeichert: {{value}}",
+    "subscription-action": "Aktion",
+    "delete-subscription": "Löschen"
   },
 
   "person-detail": {
